@@ -1,0 +1,9 @@
+services:
+  social-signaling:
+    networks:
+      - npm-proxy
+
+networks:
+  npm-proxy:
+    external: true
+    name: "${NPM_NETWORK:?Set NPM_NETWORK to the existing Nginx Proxy Manager Docker network}"

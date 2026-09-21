@@ -1,0 +1,211 @@
+/* Saisies de terrain : une coque compacte, puis des contrôles flottants. */
+
+#field-nickname,
+#field-number {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: var(--ui-z-overlay);
+  color: var(--ui-theme-paper);
+  border: 1px solid var(--ui-line);
+  border-radius: 0;
+  background: var(--ui-theme-texture), var(--ui-surface-shell);
+  background-clip: padding-box;
+  box-shadow: var(--ui-shadow-panel);
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  font-family: var(--ui-font-display);
+  image-rendering: pixelated;
+}
+
+#field-nickname {
+  top: 50%;
+  left: 50%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: min(720px, calc(100% - 40px));
+  max-height: min(calc(var(--visual-viewport-height, 100svh) - 32px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  max-inline-size: calc(100cqw - var(--runtime-safe-left) - var(--runtime-safe-right));
+  padding: clamp(14px, 2.5vw, 22px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  translate: -50% -50%;
+  animation: field-input-enter 180ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+#field-nickname > :where(label, input, .field-nickname-count) {
+  grid-column: 1 / -1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+#field-nickname > label {
+  overflow: hidden;
+  color: var(--ui-theme-bright);
+  font-size: clamp(18px, 3vw, 28px);
+  font-weight: 900;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#field-nickname[data-phase='storage-message'] {
+  min-height: min(230px, calc(var(--visual-viewport-height, 100svh) - 32px));
+  align-content: center;
+}
+
+#field-nickname[data-phase='storage-message'] > label {
+  color: var(--ui-theme-paper);
+  font: 800 clamp(16px, 2.4vw, 24px)/1.5 var(--ui-font-pixel);
+  text-overflow: clip;
+  white-space: pre-wrap;
+}
+
+#field-nickname > input,
+#field-number > input {
+  box-sizing: border-box;
+  min-width: 0;
+  border: 1px solid var(--ui-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-input);
+  box-shadow: inset 0 0 0 1px rgb(var(--ui-theme-bright-rgb) / .08);
+  font: 800 clamp(16px, 2.5vw, 24px)/1 var(--ui-font-pixel);
+}
+
+#field-nickname > input {
+  width: 100%;
+  height: 52px;
+  padding: 0 14px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.field-nickname-count {
+  color: var(--ui-theme-muted);
+  font: 800 12px/1 var(--ui-font-pixel);
+  text-align: right;
+}
+
+#field-nickname :where(button[type='submit'], button[data-nickname-cancel]),
+#field-number > button {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 42px;
+  padding: 6px 12px;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font-family: var(--ui-font-display);
+  font-weight: 850;
+  image-rendering: pixelated;
+  transition: border-color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease, transform 150ms ease;
+}
+
+html[data-input-modality='pointer'] #field-nickname :where(button[type='submit'], button[data-nickname-cancel]):hover:not(:disabled),
+html[data-input-modality='pointer'] #field-number > button:hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.1);
+}
+
+#field-nickname > button:focus-visible,
+#field-number > button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+}
+
+#field-number {
+  right: clamp(14px, 6vw, 72px);
+  bottom: clamp(132px, 21vh, 220px);
+  display: grid;
+  grid-template-columns: minmax(116px, 1fr) repeat(2, minmax(48px, auto));
+  gap: 7px;
+  width: min(420px, calc(100% - 28px));
+  padding: 10px;
+  animation: field-number-enter 160ms ease-out both;
+}
+
+#field-number > input {
+  height: 48px;
+  padding: 0 10px;
+  text-align: end;
+}
+
+#field-number > button {
+  min-width: 48px;
+  min-height: 48px;
+  padding-inline: 10px;
+  font: 900 18px/1 var(--ui-font-pixel);
+}
+
+html[data-input-profile='touch'] #field-nickname button,
+html[data-input-profile='touch'] #field-number button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (max-width: 520px) {
+  #field-nickname {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: calc(100% - 20px);
+    max-height: calc(var(--visual-viewport-height, 100svh) - 20px);
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  }
+
+  #field-number {
+    right: 10px;
+    bottom: max(116px, calc(env(safe-area-inset-bottom) + 104px));
+    width: calc(100% - 20px);
+  }
+}
+
+@media (max-height: 560px) {
+  #field-number {
+    right: var(--runtime-safe-right);
+    bottom: var(--runtime-safe-bottom);
+    max-block-size: calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom));
+  }
+}
+
+html[data-display-profile='phone-portrait'] #field-nickname {
+  width: calc(100% - 20px);
+  max-height: calc(var(--visual-viewport-height, 100svh) - 20px);
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+
+html[data-display-profile='phone-landscape'] #field-nickname {
+  gap: 5px;
+  width: min(720px, calc(100% - 24px));
+  max-height: calc(var(--visual-viewport-height, 100svh) - 16px);
+  padding: 10px max(12px, env(safe-area-inset-right)) 10px max(12px, env(safe-area-inset-left));
+}
+
+html[data-display-profile='phone-landscape'] #field-nickname > label {
+  font-size: 18px;
+}
+
+html[data-display-profile='phone-landscape'] #field-nickname > input {
+  height: 44px;
+}
+
+@keyframes field-input-enter {
+  from { opacity: 0; scale: .97; }
+  to { opacity: 1; scale: 1; }
+}
+
+@keyframes field-number-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #field-nickname,
+  #field-number { animation: none; }
+}

@@ -1,0 +1,19 @@
+# Nouvelle partie complète, combats réels accélérés et sauvegarde jetable.
+pokemaster-debug-tape-v1 campagne-premier-badge
+
+REPORT avant-campagne
+BOT ZEPHYR normal
+WAIT journey=passed 12m
+EXPECT campaignPreset=normal
+EXPECT campaignMode=normal
+EXPECT campaignModules=none
+EXPECT initialPartySize=1
+EXPECT simpleBattleSeen=true
+EXPECT minDoublePlayerParticipants=0
+EXPECT zephyrBadge=true
+EXPECT falknerDefeated=true
+EXPECT battle=none
+EXPECT script=false
+EXPECT saveReady=true
+REPORT badge-zephyr-valide
+STOP

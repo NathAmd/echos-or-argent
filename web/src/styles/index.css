@@ -1,0 +1,34 @@
+/*
+ * Point d'entrée CSS unique.
+ *
+ * L'ordre est contractuel : les fichiers ont été extraits sans réordonner la
+ * cascade existante. Toute nouvelle interface doit rejoindre son propriétaire
+ * fonctionnel plutôt qu'ajouter une nouvelle feuille globale.
+ */
+@import './foundation.css';
+@import './application.css';
+@import './battle.css';
+@import './menus.css';
+@import './ui-system.css';
+@import './in-game.css';
+@import './ui-harmony.css';
+@import './menu-shell.css';
+@import './hud.css';
+@import './title.css';
+@import './summary.css';
+@import './pokedex.css';
+@import './team.css';
+@import './bag.css';
+@import './pc-box.css';
+@import './hud-dialog.css';
+@import './choice.css';
+@import './progression.css';
+@import './field-input.css';
+@import './game-text-entry.css';
+@import './shop.css';
+@import './field-apps.css';
+@import './alph-puzzle.css';
+@import './modal.css';
+@import './pokegear.css';
+@import './safari.css';
+@import './multiplayer.css';

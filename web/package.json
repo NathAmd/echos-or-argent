@@ -1,0 +1,52 @@
+{
+  "name": "pokemaster-client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0 <21 || >=22.13.0 <23 || >=24",
+    "npm": ">=10.8.0"
+  },
+  "scripts": {
+    "check:env": "node ./scripts/check-environment.mjs",
+    "check:architecture": "node ./scripts/check-source-boundaries.mjs && node ./scripts/check-repository-artifacts.mjs",
+    "check:reproducibility": "node ./scripts/check-git-reproducibility.mjs",
+    "check:repository": "node ./scripts/check-repository-artifacts.mjs",
+    "preinstall": "node ./scripts/check-environment.mjs --strict",
+    "dev": "vite",
+    "dev:lan": "node ./scripts/run-lan-development.mjs",
+    "lan:service": "node ./scripts/manage-lan-launch-agent.mjs",
+    "lan:service:install": "node ./scripts/manage-lan-launch-agent.mjs install",
+    "lan:service:start": "node ./scripts/manage-lan-launch-agent.mjs start",
+    "lan:service:stop": "node ./scripts/manage-lan-launch-agent.mjs stop",
+    "lan:service:status": "node ./scripts/manage-lan-launch-agent.mjs status",
+    "lan:service:uninstall": "node ./scripts/manage-lan-launch-agent.mjs uninstall",
+    "bot:demo": "vite --host 127.0.0.1 --open '/?bot=1'",
+    "test:live": "vite --host 127.0.0.1 --open '/?test=1'",
+    "test:live:headless": "node ./scripts/run-live-debug-tapes.mjs",
+    "test:live:harness": "vitest run scripts/run-live-debug-tapes.test.mjs",
+    "build": "npm run check:repository && tsc && vite build && node ./scripts/protect-build.mjs",
+    "generate:build-key": "node ./scripts/generate-build-key.mjs",
+    "verify:build": "node ./scripts/protect-build.mjs --verify",
+    "lint": "eslint src scripts/check-source-boundaries.mjs scripts/check-git-reproducibility.mjs scripts/check-git-reproducibility.test.mjs scripts/check-repository-artifacts.mjs scripts/check-repository-artifacts.test.mjs scripts/protect-build.mjs scripts/protect-build.test.mjs scripts/generate-build-key.mjs scripts/lan-development.mjs scripts/lan-development.test.mjs scripts/lan-health-watchdog.mjs scripts/lan-health-watchdog.test.mjs scripts/manage-lan-launch-agent.mjs scripts/manage-lan-launch-agent.test.mjs scripts/run-lan-development.mjs scripts/live-debug-harness-runtime.mjs scripts/run-live-debug-tapes.mjs scripts/run-live-debug-tapes.test.mjs scripts/rom-audit-certifications.mjs scripts/run-rom-audit.mjs scripts/run-rom-audit.test.mjs && npm run check:architecture",
+    "test": "vitest run",
+    "journey:live": "RUN_ROM_JOURNEY=1 LIVE_ROM_JOURNEY=1 vitest run --disableConsoleIntercept --reporter=verbose src/game/simulation/openingJourney.test.ts",
+    "test:world-audit": "RUN_WORLD_AUDIT=1 vitest run src/game/world/worldAuditProbe.test.ts",
+    "test:rom-audit": "node ./scripts/run-rom-audit.mjs",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.2.0",
+    "@types/three": "^0.185.4",
+    "eslint": "^10.8.1",
+    "parse5": "^8.0.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.66.0",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "three": "^0.185.1"
+  }
+}

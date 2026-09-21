@@ -1,0 +1,350 @@
+/* Saisie globale : une seule surface pour le clavier, la manette et le tactile. */
+
+.game-text-entry-overlay {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: var(--ui-z-critical);
+  inset: 0;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding:
+    max(14px, var(--runtime-safe-top), env(safe-area-inset-top))
+    max(14px, var(--runtime-safe-right), env(safe-area-inset-right))
+    max(14px, var(--runtime-safe-bottom), env(safe-area-inset-bottom))
+    max(14px, var(--runtime-safe-left), env(safe-area-inset-left));
+  overflow: hidden;
+  color: var(--ui-theme-paper);
+  background: rgb(var(--ui-theme-panel-rgb) / .82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  backdrop-filter: blur(14px) saturate(1.08);
+  isolation: isolate;
+  animation: game-text-entry-backdrop-in 150ms ease-out both;
+}
+
+.game-text-entry-overlay[hidden] { display: none; }
+
+.game-text-entry-overlay::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: var(--ui-theme-texture);
+  background-size: var(--ui-theme-texture-size);
+  opacity: calc(var(--ui-theme-texture-opacity) * .72);
+  content: '';
+  animation: ui-theme-texture-shift 12s steps(3, end) infinite;
+}
+
+.game-text-entry-surface {
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(8px, 1.8vmin, 14px);
+  width: min(880px, 100%);
+  max-height: 100%;
+  padding: clamp(12px, 2.6vmin, 22px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--ui-line-strong);
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), var(--ui-surface-shell);
+  background-size: var(--ui-theme-texture-size), auto;
+  background-blend-mode: soft-light, normal;
+  box-shadow: var(--ui-shadow-panel), inset 0 0 0 3px rgb(var(--ui-theme-accent-rgb) / .18);
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  clip-path: polygon(10px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 10px);
+  font-family: var(--ui-font-display);
+  image-rendering: pixelated;
+  animation: game-text-entry-surface-in 190ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+.game-text-entry-surface::after {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  width: clamp(54px, 12%, 100px);
+  height: 4px;
+  background: var(--ui-theme-bright);
+  box-shadow: 0 0 12px var(--ui-theme-glow);
+  content: '';
+}
+
+.game-text-entry-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px 12px;
+  align-items: end;
+  min-width: 0;
+}
+
+.game-text-entry-header h2 {
+  grid-column: 1 / -1;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ui-theme-bright);
+  font-size: clamp(18px, 3vmin, 28px);
+  font-weight: 900;
+  letter-spacing: .055em;
+  line-height: 1.12;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-text-entry-label {
+  grid-column: 1 / -1;
+  min-width: 0;
+  color: var(--ui-theme-muted);
+  font: 800 clamp(11px, 1.7vmin, 14px)/1.2 var(--ui-font-pixel);
+  letter-spacing: .04em;
+}
+
+.game-text-entry-input-rail {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid var(--ui-line);
+  background: var(--ui-surface-input);
+  box-shadow: inset 5px 0 rgb(var(--ui-theme-accent-rgb) / .68), inset 0 -2px rgb(0 0 0 / .42);
+  transition: border-color 130ms ease, box-shadow 160ms ease, filter 130ms ease;
+}
+
+.game-text-entry-input-rail:focus-within {
+  border-color: var(--ui-line-strong);
+  box-shadow: inset 6px 0 var(--ui-theme-bright), inset 0 -2px rgb(0 0 0 / .42), 0 0 14px var(--ui-theme-glow);
+}
+
+.game-text-entry-input {
+  box-sizing: border-box;
+  min-width: 0;
+  height: clamp(46px, 7vmin, 58px);
+  padding: 0 12px 0 16px;
+  border: 0;
+  outline: 0;
+  color: var(--ui-theme-paper);
+  background: transparent;
+  caret-color: var(--ui-theme-bright);
+  font: 850 clamp(16px, 2.5vmin, 23px)/1 var(--ui-font-pixel);
+  letter-spacing: .045em;
+}
+
+.game-text-entry-textarea {
+  height: clamp(96px, 18vmin, 150px);
+  min-height: 88px;
+  padding-block: 12px;
+  overflow: auto;
+  line-height: 1.35;
+  resize: none;
+  scrollbar-color: var(--ui-theme-bright) transparent;
+  white-space: pre-wrap;
+}
+
+.game-text-entry-overlay[data-mode='multiline'] .game-text-entry-input-rail { align-items: stretch; }
+.game-text-entry-overlay[data-mode='multiline'] .game-text-entry-counter {
+  align-self: end;
+  padding-block-end: 12px;
+}
+
+.game-text-entry-overlay[data-mode='name'] .game-text-entry-input { text-transform: uppercase; }
+.game-text-entry-overlay[data-mode='password'] .game-text-entry-input { letter-spacing: .15em; }
+
+.game-text-entry-input::placeholder { color: rgb(var(--ui-theme-paper-rgb) / .42); }
+
+.game-text-entry-counter {
+  min-width: 58px;
+  padding-inline: 10px;
+  color: var(--ui-theme-muted);
+  font: 800 11px/1 var(--ui-font-pixel);
+  text-align: right;
+}
+
+.game-text-entry-keyboard {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(38px, 1fr));
+  grid-auto-rows: minmax(42px, 1fr);
+  gap: clamp(4px, 1vmin, 7px);
+  min-width: 0;
+  min-height: 0;
+  padding-block: 2px;
+}
+
+.game-text-entry-keyboard[data-columns='7'] { grid-template-columns: repeat(7, minmax(38px, 1fr)); }
+.game-text-entry-keyboard[data-columns='5'] { grid-template-columns: repeat(5, minmax(42px, 1fr)); }
+.game-text-entry-keyboard[data-columns='3'] {
+  grid-template-columns: repeat(3, minmax(58px, 1fr));
+  width: min(360px, 100%);
+  justify-self: center;
+}
+
+.game-text-entry-key,
+.game-text-entry-cancel {
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0;
+  min-height: 42px;
+  padding: 5px 8px;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font: 850 clamp(12px, 1.75vmin, 17px)/1 var(--ui-font-display);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 120ms ease, background-color 120ms ease, box-shadow 140ms ease, color 120ms ease, filter 120ms ease, transform 120ms ease;
+}
+
+.game-text-entry-key[data-key-kind='submit'] {
+  color: var(--ui-theme-ink);
+  background: var(--ui-theme-bright);
+}
+
+.game-text-entry-key[data-key-kind='backspace'],
+.game-text-entry-cancel {
+  border-color: rgb(239 118 122 / .72);
+  background: rgb(94 31 42 / .88);
+}
+
+.game-text-entry-key[data-key-kind='line-break'] {
+  border-color: rgb(var(--ui-theme-accent-rgb) / .78);
+  background: rgb(var(--ui-theme-accent-rgb) / .28);
+}
+
+.game-text-entry-key:disabled {
+  opacity: .42;
+  filter: grayscale(.6);
+  cursor: default;
+}
+
+html[data-input-modality='pointer'] .game-text-entry-key:hover:not(:disabled),
+html[data-input-modality='pointer'] .game-text-entry-cancel:hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.game-text-entry-key[aria-current='true'],
+.game-text-entry-key:focus-visible,
+.game-text-entry-cancel:focus-visible {
+  z-index: 1;
+  border-color: var(--ui-control-line-active);
+  outline: 0;
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected), 0 0 14px var(--ui-theme-glow);
+  transform: translateY(-2px);
+}
+
+.game-text-entry-key[aria-current='true']::before {
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  color: var(--ui-theme-ink);
+  font-size: 9px;
+  content: '▶';
+  translate: 0 -50%;
+  animation: game-text-entry-cursor 700ms steps(2, end) infinite;
+}
+
+.game-text-entry-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.game-text-entry-cancel {
+  flex: 0 0 auto;
+  min-width: 110px;
+  min-height: 44px;
+}
+
+.game-text-entry-hint {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 7px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 900 10px/1 var(--ui-font-pixel);
+}
+
+.game-text-entry-status {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #ffd1d1;
+  font: 800 12px/1.3 var(--ui-font-pixel);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-text-entry-overlay[data-invalid='true'] .game-text-entry-input-rail {
+  border-color: #ff8c91;
+  box-shadow: inset 6px 0 #ff8c91, 0 0 16px rgb(255 70 82 / .32);
+  animation: game-text-entry-invalid 170ms steps(2, end) 2;
+}
+
+@keyframes game-text-entry-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes game-text-entry-surface-in {
+  from { opacity: 0; transform: translateY(10px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes game-text-entry-cursor {
+  50% { translate: 2px -50%; }
+}
+
+@keyframes game-text-entry-invalid {
+  50% { transform: translateX(4px); }
+}
+
+@media (max-width: 760px) {
+  .game-text-entry-overlay { padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
+  .game-text-entry-surface { gap: 8px; padding: 12px; }
+  .game-text-entry-keyboard { grid-auto-rows: minmax(44px, 1fr); }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .game-text-entry-overlay { place-items: stretch center; padding-block: max(5px, env(safe-area-inset-top)) max(5px, env(safe-area-inset-bottom)); }
+  .game-text-entry-surface { width: min(940px, 100%); padding-block: 8px; }
+  .game-text-entry-header { gap-block: 3px; }
+  .game-text-entry-header h2 { font-size: 17px; }
+  .game-text-entry-label { display: none; }
+  .game-text-entry-input { height: 40px; font-size: 15px; }
+  .game-text-entry-textarea { height: 76px; min-height: 64px; padding-block: 8px; line-height: 1.25; }
+  .game-text-entry-overlay[data-mode='multiline'] .game-text-entry-counter { padding-block-end: 8px; }
+  .game-text-entry-keyboard { grid-auto-rows: minmax(36px, 1fr); gap: 3px; }
+  .game-text-entry-key { min-height: 36px; }
+  .game-text-entry-footer { min-height: 34px; }
+  .game-text-entry-cancel { min-height: 34px; }
+}
+
+html[data-input-profile='touch'] .game-text-entry-key,
+html[data-input-profile='touch'] .game-text-entry-cancel {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-text-entry-overlay,
+  .game-text-entry-overlay::before,
+  .game-text-entry-surface,
+  .game-text-entry-key[aria-current='true']::before,
+  .game-text-entry-overlay[data-invalid='true'] .game-text-entry-input-rail { animation: none; }
+  .game-text-entry-key,
+  .game-text-entry-cancel,
+  .game-text-entry-input-rail { transition-duration: .01ms; }
+}

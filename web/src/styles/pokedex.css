@@ -1,0 +1,574 @@
+/*
+ * Propriétaire du domaine Pokédex.
+ *
+ * La grille et le détail conservent la composition de la présentation
+ * Pokédex, tandis que matière, contraste et états viennent du thème global.
+ */
+
+#app #game-menu.ui-menu.ui-menu-detail[data-screen='pokedex'] {
+  width: min(940px, calc(100% - 40px));
+  height: min(610px, calc(100% - 40px));
+}
+
+#app #game-menu[data-screen='pokedex'] > .ui-menu-header {
+  background: transparent;
+  box-shadow: none;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-menu-layout {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  overflow: hidden;
+  color: var(--ui-theme-paper);
+  background: transparent;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-counters {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 30px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-counter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+  min-width: 92px;
+  padding: 4px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--ui-line);
+  color: var(--ui-theme-muted);
+  background: var(--ui-surface-soft);
+  box-shadow: none;
+  font-size: 10px;
+  letter-spacing: .11em;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-counter strong {
+  margin-left: auto;
+  color: var(--ui-theme-bright);
+  font: 900 18px/1 var(--ui-font-pixel);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-counter > span {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  box-shadow: none;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-menu-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(270px, .8fr);
+  min-width: 0;
+  min-height: 0;
+  gap: 12px;
+  background: transparent;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: 84px;
+  align-content: start;
+  min-width: 0;
+  min-height: 0;
+  gap: 7px;
+  padding: 3px 5px 3px 3px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid::-webkit-scrollbar,
+#app #game-menu[data-screen='pokedex'] .pokedex-detail::-webkit-scrollbar {
+  display: none;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-cell {
+  appearance: none;
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template: auto minmax(0, 1fr) auto / minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  padding: 4px 6px 5px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  image-rendering: pixelated;
+  transition: border-color 120ms ease, color 120ms ease, filter 120ms ease, transform 120ms ease;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-cell[aria-current='true'] {
+  z-index: 1;
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+
+html[data-input-modality='pointer'] #app #game-menu[data-screen='pokedex'] .pokedex-grid-cell:hover:not(:disabled):not([aria-current='true']) {
+  z-index: 1;
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-cell:focus-visible {
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 2px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-number {
+  font: 900 9px/1 var(--ui-font-pixel);
+  letter-spacing: .08em;
+  opacity: .78;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-art {
+  position: relative;
+  display: grid;
+  min-height: 0;
+  place-items: center;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-cell[data-shiny='true'] .pokedex-grid-art::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  right: 13px;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+  background: linear-gradient(135deg, var(--ui-theme-accent), rgb(255 255 255 / .92) 48%, var(--ui-theme-bright));
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  filter: drop-shadow(0 0 5px var(--ui-theme-glow));
+  animation: ui-holo-scan 2.1s steps(8, end) infinite;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-cell[data-shiny='true'] canvas,
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity[data-shiny='true'] .pokedex-sprite {
+  animation: ui-holo-sprite 2.4s steps(12, end) infinite;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-art :where(canvas, .pokedex-sprite) {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-art canvas[data-rom-asset-state='seen'],
+#app #game-menu[data-screen='pokedex'] .pokedex-sprite-seen {
+  opacity: .62;
+  filter: grayscale(1) brightness(.52) contrast(.9);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-art .pokedex-sprite-unknown {
+  display: grid;
+  color: currentColor;
+  font: 900 24px/1 var(--ui-font-pixel);
+  opacity: .42;
+  filter: none;
+  place-items: center;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-name {
+  overflow: hidden;
+  font-size: 9px;
+  line-height: 1;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-registration {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid currentColor;
+  rotate: 45deg;
+  opacity: .34;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-cell[data-registration='caught'] .pokedex-grid-registration {
+  border-color: var(--ui-theme-bright);
+  background: var(--ui-theme-bright);
+  box-shadow: 0 0 7px rgb(var(--ui-theme-bright-rgb) / .6);
+  opacity: .95;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-grid-cell[data-registration='seen'] .pokedex-grid-registration {
+  opacity: .72;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  min-height: 0;
+  gap: 10px;
+  padding: 6px 4px 6px 14px;
+  overflow: auto;
+  border: 0;
+  border-left: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: transparent;
+  scrollbar-width: none;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 116px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity > .pokedex-sprite {
+  display: grid;
+  width: 108px;
+  height: 108px;
+  place-items: center;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 8px 7px rgba(0, 0, 0, .34));
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity > .pokedex-sprite-seen {
+  opacity: .62;
+  filter: grayscale(1) brightness(.52) contrast(.9);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity > .pokedex-sprite canvas {
+  width: 100%;
+  height: 100%;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity > .pokedex-sprite-unknown {
+  color: var(--ui-theme-muted);
+  font: 900 42px/1 var(--ui-font-pixel);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity h3 {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity h3 > span {
+  color: var(--ui-theme-muted);
+  font: 800 11px/1 var(--ui-font-pixel);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-identity h3 > strong {
+  color: var(--ui-theme-paper);
+  font-size: clamp(16px, 2vw, 23px);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-category {
+  display: block;
+  margin-top: 3px;
+  color: var(--ui-theme-muted);
+  font-size: 9px;
+  line-height: 1.15;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-registration {
+  width: max-content;
+  max-width: 100%;
+  margin: 6px 0 0;
+  padding: 2px 7px;
+  border: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-soft);
+  font-size: 9px;
+  letter-spacing: .11em;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-registration[data-registration='caught'] {
+  color: var(--ui-theme-bright);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-types {
+  display: flex;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-types span {
+  padding: 2px 6px;
+  border-bottom: 1px solid currentColor;
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-measurements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  margin-top: 6px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-measurement {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  color: var(--ui-theme-muted);
+  font-size: 8px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-measurement strong {
+  color: var(--ui-theme-paper);
+  font-size: 10px;
+}
+
+/* Les formes sont de vrais contrôles radio : le libellé vient de la ROM et le
+   losange ne sert que de repère visuel. */
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button {
+  appearance: none;
+  box-sizing: border-box;
+  display: inline-grid;
+  grid-template-columns: 7px minmax(0, auto);
+  align-items: center;
+  max-width: min(100%, 160px);
+  min-height: 28px;
+  gap: 7px;
+  padding: 4px 8px;
+  cursor: pointer;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font: 800 10px/1.1 var(--ui-font-pixel);
+  text-align: left;
+  transition: border-color 120ms ease, color 120ms ease, background-color 120ms ease, filter 120ms ease, transform 120ms ease;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button > i {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--ui-theme-accent);
+  transform: rotate(45deg);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button[data-current='true'],
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button[aria-checked='true'] {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button[data-current='true'] > i,
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button[aria-checked='true'] > i {
+  border-color: var(--ui-theme-bright);
+  background: var(--ui-theme-bright);
+  box-shadow: 0 0 6px var(--ui-theme-glow);
+}
+
+html[data-input-modality='pointer'] #app #game-menu[data-screen='pokedex'] .pokedex-form-pips button:hover:not(:disabled):not([aria-checked='true']) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.08);
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-form-pips button:focus-visible {
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 2px;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-shiny-mark {
+  display: block;
+  width: 13px;
+  height: 13px;
+  margin-top: 7px;
+  background: linear-gradient(135deg, var(--ui-theme-accent), rgb(255 255 255 / .92) 48%, var(--ui-theme-bright));
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  filter: drop-shadow(0 0 5px var(--ui-theme-glow));
+  animation: ui-holo-sprite 2.4s steps(12, end) infinite;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-detail-section {
+  display: grid;
+  gap: 5px;
+  padding-top: 8px;
+  border-top: 1px solid var(--ui-line-soft);
+  background: transparent;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-info-label {
+  padding: 0;
+  border: 0;
+  color: var(--ui-theme-bright);
+  background: transparent;
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-area-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#app #game-menu[data-screen='pokedex'] .pokedex-area-list li {
+  display: block;
+  padding: 3px 5px;
+  overflow: hidden;
+  border: 0;
+  border-left: 2px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-soft);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app #game-menu[data-screen='pokedex'] :where(.pokedex-area-empty, .pokedex-description) {
+  margin: 0;
+  color: var(--ui-theme-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+html[data-input-profile='touch'] #app #game-menu[data-screen='pokedex'] .pokedex-form-pips button {
+  min-height: 44px;
+}
+
+@media (max-width: 860px) {
+  #app #game-menu[data-screen='pokedex'] .pokedex-menu-body {
+    grid-template-columns: minmax(0, 1fr) minmax(235px, .72fr);
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-detail-identity {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-detail-identity > .pokedex-sprite {
+    width: 84px;
+    height: 84px;
+  }
+}
+
+@media (max-width: 560px) {
+  #app #game-menu.ui-menu.ui-menu-detail[data-screen='pokedex'] {
+    width: calc(100% - 18px);
+    height: calc(100% - 18px);
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-menu-body {
+    grid-template: minmax(210px, 1fr) minmax(150px, .65fr) / minmax(0, 1fr);
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 76px;
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-grid-art :where(canvas, .pokedex-sprite) {
+    width: 34px;
+    height: 34px;
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-detail {
+    padding: 8px 3px 3px;
+    border-top: 1px solid var(--ui-line);
+    border-left: 0;
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-detail-identity {
+    grid-template-columns: 76px minmax(0, 1fr);
+    min-height: 154px;
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-detail-identity > .pokedex-sprite {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+@media (max-width: 560px) and (min-height: 700px) {
+  #app #game-menu[data-screen='pokedex'] .pokedex-menu-body {
+    grid-template-rows: minmax(210px, .9fr) minmax(260px, .9fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app #game-menu[data-screen='pokedex'] .pokedex-grid-cell,
+  #app #game-menu[data-screen='pokedex'] .pokedex-form-pips button {
+    transition: none;
+  }
+
+  #app #game-menu[data-screen='pokedex'] .pokedex-grid-cell[data-shiny='true'] .pokedex-grid-art::after,
+  #app #game-menu[data-screen='pokedex'] .pokedex-grid-cell[data-shiny='true'] canvas,
+  #app #game-menu[data-screen='pokedex'] .pokedex-detail-identity[data-shiny='true'] .pokedex-sprite,
+  #app #game-menu[data-screen='pokedex'] .pokedex-shiny-mark {
+    animation: none;
+  }
+}
+
+/* L'overlay 18 de première capture est une fiche, pas le Pokédex complet. */
+#app #game-menu.ui-menu.ui-menu-detail.pokedex-capture-registration-host[data-screen='pokedex'] {
+  grid-template-rows: minmax(0, 1fr);
+  width: min(520px, calc(100% - 24px));
+  height: auto;
+  max-height: calc(var(--visual-viewport-height, 100svh) - 24px);
+  cursor: pointer;
+}
+
+#app #game-menu.pokedex-capture-registration-host[data-screen='pokedex'] .pokedex-capture-registration {
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(12px, 2.5vmin, 20px);
+  overflow: hidden;
+}
+
+#app #game-menu.pokedex-capture-registration-host[data-screen='pokedex'] .pokedex-detail {
+  max-height: calc(var(--visual-viewport-height, 100svh) - 64px);
+  padding: 0;
+  border: 0;
+}

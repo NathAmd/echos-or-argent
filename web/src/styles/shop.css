@@ -1,0 +1,380 @@
+/* Boutique terrain : une coque compacte et des contrôles alimentés par la ROM. */
+
+#app #field-choice.field-choice-shop {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: var(--ui-z-overlay);
+  top: 50%;
+  left: 50%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(680px, calc(100% - 28px));
+  height: min(450px, calc(var(--visual-viewport-height, 100svh) - 28px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  max-inline-size: calc(100cqw - var(--runtime-safe-left) - var(--runtime-safe-right));
+  max-block-size: calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom));
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), var(--ui-surface-shell);
+  background-clip: padding-box;
+  box-shadow: var(--ui-shadow-panel);
+  clip-path: none;
+  translate: -50% -50%;
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  font-family: var(--ui-font-display);
+  image-rendering: pixelated;
+  animation: field-shop-enter 180ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+#app #field-choice.field-choice-shop[data-shop-phase='confirm'] {
+  height: auto;
+  max-height: min(calc(var(--visual-viewport-height, 100svh) - 28px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+}
+
+#app .field-shop-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 8px 15px;
+  border: 0;
+  border-bottom: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: transparent;
+  box-shadow: none;
+}
+
+#app .field-shop-header > strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ui-theme-bright);
+  font: 900 clamp(16px, 2vw, 20px)/1 var(--ui-font-pixel);
+  letter-spacing: .06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app .field-shop-header > span {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+  min-width: 0;
+}
+
+#app .field-shop-header small {
+  overflow: hidden;
+  color: var(--ui-theme-muted);
+  font: 800 9px/1 var(--ui-font-pixel);
+  letter-spacing: .08em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app .field-shop-header span strong {
+  color: var(--ui-theme-paper);
+  font: 900 14px/1 var(--ui-font-pixel);
+  white-space: nowrap;
+}
+
+#app .field-shop-list {
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 6px;
+  min-height: 0;
+  padding: 7px 8px 9px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+#app .field-shop-list::-webkit-scrollbar { display: none; }
+
+#app .field-shop-pocket {
+  position: sticky;
+  z-index: 2;
+  top: -7px;
+  min-width: 0;
+  padding: 8px 10px 6px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--ui-line-soft);
+  color: var(--ui-theme-bright);
+  background: rgb(var(--ui-theme-panel-rgb) / .86);
+  font: 800 10px/1 var(--ui-font-pixel);
+  letter-spacing: .08em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+#app #field-choice.field-choice-shop button {
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font-family: var(--ui-font-display);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 130ms ease, color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease, transform 150ms ease;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+html[data-input-modality='pointer'] #app #field-choice.field-choice-shop button:hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.08);
+}
+
+#app #field-choice.field-choice-shop button[aria-current='true'],
+#app #field-choice.field-choice-shop button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 1px;
+}
+
+#app #field-choice.field-choice-shop button[aria-current='true'] :where(small, .field-shop-item-values strong),
+#app #field-choice.field-choice-shop button:focus-visible :where(small, .field-shop-item-values strong) {
+  color: color-mix(in srgb, var(--ui-theme-ink) 72%, var(--ui-theme-secondary));
+}
+
+#app #field-choice.field-choice-shop .field-shop-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 60px;
+  padding: 5px 11px;
+  text-align: left;
+}
+
+#app .field-shop-item-icon {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#app .field-shop-item-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#app .field-shop-item-copy :where(strong, small) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app .field-shop-item-copy strong {
+  font-size: 13px;
+  letter-spacing: .025em;
+}
+
+#app .field-shop-item-copy small {
+  color: var(--ui-theme-muted);
+  font-size: 10px;
+}
+
+#app .field-shop-item-values {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  min-width: 72px;
+}
+
+#app .field-shop-item-values strong {
+  color: var(--ui-theme-bright);
+  font: 900 12px/1 var(--ui-font-pixel);
+  white-space: nowrap;
+}
+
+#app .field-shop-item-values small {
+  color: var(--ui-theme-muted);
+  font: 800 10px/1 var(--ui-font-pixel);
+  white-space: nowrap;
+}
+
+#app #field-choice.field-choice-shop .field-shop-exit {
+  min-height: 44px;
+  margin-top: 2px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+#app .field-shop-confirm {
+  display: grid;
+  align-content: center;
+  gap: 13px;
+  min-height: 0;
+  padding: clamp(14px, 3vw, 26px);
+  overflow-y: auto;
+}
+
+#app .field-shop-confirm > p {
+  margin: 0;
+  color: var(--ui-theme-paper);
+  font-size: clamp(13px, 1.8vw, 17px);
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+#app .field-shop-confirm-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 9px 3px;
+  border-block: 1px solid var(--ui-line-soft);
+  background: transparent;
+  box-shadow: none;
+}
+
+#app .field-shop-confirm-item > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+#app .field-shop-confirm-item :where(span strong, small) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app .field-shop-confirm-item small {
+  color: var(--ui-theme-muted);
+  font-size: 10px;
+}
+
+#app .field-shop-confirm-item > strong {
+  color: var(--ui-theme-bright);
+  font: 900 15px/1 var(--ui-font-pixel);
+  white-space: nowrap;
+}
+
+#app .field-shop-confirm nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+#app #field-choice.field-choice-shop .field-shop-confirm-action {
+  min-height: 46px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+#app .field-number.field-number-shop {
+  z-index: calc(var(--ui-z-overlay) + 1);
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  grid-template-columns: minmax(116px, 1fr) repeat(2, minmax(80px, auto));
+  width: min(520px, calc(100% - 28px));
+  gap: 8px;
+  padding: 14px;
+  translate: -50% -50%;
+}
+
+#app .field-number.field-number-shop::before,
+#app .field-number.field-number-shop::after {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+#app .field-number.field-number-shop::before {
+  content: attr(data-shop-prompt);
+  color: var(--ui-theme-paper);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+#app .field-number.field-number-shop::after {
+  content: attr(data-shop-price);
+  color: var(--ui-theme-bright);
+  font: 900 12px/1.25 var(--ui-font-pixel);
+}
+
+#app .field-number.field-number-shop button {
+  min-width: 80px;
+  padding-inline: 10px;
+  font-size: 11px;
+}
+
+@media (max-width: 480px) {
+  #app #field-choice.field-choice-shop {
+    width: calc(100% - 16px);
+    height: min(480px, calc(var(--visual-viewport-height, 100svh) - 16px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  }
+
+  #app .field-shop-header {
+    min-height: 52px;
+    gap: 8px;
+    padding-inline: 11px;
+  }
+
+  #app #field-choice.field-choice-shop .field-shop-item {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 7px;
+    min-height: 56px;
+    padding-inline: 8px;
+  }
+
+  #app .field-shop-item-icon { width: 42px; height: 42px; }
+  #app .field-shop-item-values { min-width: 62px; }
+  #app .field-shop-item-copy small { font-size: 9px; }
+
+  #app .field-number.field-number-shop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: calc(100% - 16px);
+  }
+
+  #app .field-number.field-number-shop input { grid-column: 1 / -1; }
+  #app .field-number.field-number-shop button { min-width: 0; }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  #app #field-choice.field-choice-shop {
+    width: min(680px, calc(100% - 24px));
+    height: min(400px, calc(var(--visual-viewport-height, 100svh) - 20px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  }
+
+  #app .field-shop-header { min-height: 48px; padding-block: 5px; }
+  #app #field-choice.field-choice-shop .field-shop-item { min-height: 52px; }
+  #app .field-shop-confirm { padding-block: 10px; }
+}
+
+@keyframes field-shop-enter {
+  from { opacity: 0; scale: .975; }
+  to { opacity: 1; scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app #field-choice.field-choice-shop { animation: none; }
+}

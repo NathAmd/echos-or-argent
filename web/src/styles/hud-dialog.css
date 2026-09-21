@@ -1,0 +1,246 @@
+/*
+ * Dialogue terrain : propriétaire unique de la fenêtre de message, du nom du
+ * locuteur, de l'indication de validation et de la variante téléphone.
+ */
+
+#app #field-dialogue.field-dialogue {
+  position: absolute;
+  z-index: 8;
+  right: 0;
+  bottom: max(18px, calc(env(safe-area-inset-bottom) + 12px));
+  left: 0;
+  box-sizing: border-box;
+  width: min(820px, calc(100% - 48px));
+  min-height: clamp(104px, 15vh, 132px);
+  margin: 0 auto;
+  padding: clamp(30px, 3.8vh, 38px) 154px clamp(20px, 2.8vh, 28px) 38px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background:
+    var(--ui-theme-texture),
+    linear-gradient(90deg, rgb(var(--ui-theme-accent-rgb) / .08), transparent 38%),
+    rgb(var(--ui-theme-panel-rgb) / .72);
+  background-clip: padding-box;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .62), inset 0 0 34px rgb(var(--ui-theme-accent-rgb) / .08);
+  clip-path: polygon(7px 0, calc(100% - 7px) 0, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 0 calc(100% - 7px), 0 7px);
+  font-family: var(--ui-font-display);
+  font-size: clamp(16px, 1.35vw, 20px);
+  font-weight: 520;
+  letter-spacing: .025em;
+  line-height: 1.42;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  animation: hud-dialog-arrive 260ms cubic-bezier(.16, .84, .28, 1) both;
+}
+
+#app #field-dialogue.field-dialogue::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  right: 30px;
+  left: 30px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--ui-theme-secondary), rgb(var(--ui-theme-accent-rgb) / .32), transparent 78%);
+  box-shadow: 0 0 8px rgb(var(--ui-theme-accent-rgb) / .2);
+  pointer-events: none;
+}
+
+#app #field-dialogue-text {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+#app #field-dialogue.field-dialogue .field-dialogue-speaker {
+  position: absolute;
+  z-index: 2;
+  bottom: calc(100% - 6px);
+  left: 38px;
+  box-sizing: border-box;
+  min-width: 150px;
+  max-width: min(62vw, 430px);
+  padding: 7px 22px 6px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line-active);
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), rgb(var(--ui-theme-panel-rgb) / .82);
+  background-clip: padding-box;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .42), inset 0 0 0 1px rgb(var(--ui-theme-bright-rgb) / .15);
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+  font: 750 clamp(11px, 1vw, 14px)/1.1 var(--ui-font-display);
+  letter-spacing: .09em;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+  animation: in-game-speaker-arrive 260ms 100ms ease-out both;
+}
+
+#app #field-dialogue.field-dialogue .field-dialogue-speaker[hidden] {
+  display: none;
+}
+
+#app #field-dialogue.field-dialogue .field-dialogue-prompt {
+  position: absolute;
+  right: 56px;
+  bottom: 17px;
+  color: var(--ui-theme-bright);
+  font-size: 13px;
+  filter: drop-shadow(0 0 8px var(--ui-theme-glow));
+  animation: in-game-dialog-prompt 760ms steps(2, end) infinite;
+}
+
+#app #field-dialogue.field-dialogue:not(.is-interactive) .field-dialogue-prompt {
+  visibility: hidden;
+}
+
+#app #field-dialogue.field-dialogue.has-waiting-icon .field-dialogue-prompt {
+  visibility: visible;
+}
+
+#app #field-dialogue.field-dialogue .field-dialogue-control {
+  position: absolute;
+  right: 19px;
+  bottom: 15px;
+  display: inline-flex;
+  min-height: 0;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  color: var(--ui-theme-muted);
+  background: transparent;
+  box-shadow: none;
+  font-size: 0;
+}
+
+#app #field-dialogue.field-dialogue .field-dialogue-control :is(i, kbd) {
+  box-sizing: border-box;
+  display: grid;
+  width: auto;
+  min-width: 24px;
+  height: 23px;
+  min-height: 0;
+  padding: 1px 5px 3px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line-active);
+  border-radius: 2px;
+  color: var(--ui-theme-bright);
+  background: var(--ui-surface-input);
+  background-clip: padding-box;
+  box-shadow: inset 0 -2px rgb(var(--ui-theme-accent-rgb) / .25), 0 3px 8px rgba(0, 0, 0, .28);
+  font: 900 10px/1 var(--ui-font-pixel);
+  font-style: normal;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+/* L'appel conserve la même matière et se distingue uniquement par sa cadence. */
+#app #field-dialogue.field-dialogue.field-dialogue-phone {
+  width: min(860px, calc(100% - 48px));
+  min-height: clamp(126px, 18vh, 158px);
+  padding: clamp(45px, 5.4vh, 56px) 154px clamp(22px, 3vh, 30px) 42px;
+  background:
+    var(--ui-theme-texture),
+    linear-gradient(90deg, rgb(var(--ui-theme-accent-rgb) / .14), transparent 46%),
+    rgb(var(--ui-theme-panel-rgb) / .74);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .66), inset 5px 0 rgb(var(--ui-theme-accent-rgb) / .72), inset 0 0 34px rgb(var(--ui-theme-accent-rgb) / .1);
+  animation-name: phone-dialog-arrive;
+}
+
+#app #field-dialogue.field-dialogue.field-dialogue-phone::before {
+  top: 15px;
+  right: 38px;
+  left: 38px;
+}
+
+#app #field-dialogue.field-dialogue.field-dialogue-phone .field-dialogue-speaker {
+  left: 42px;
+  min-width: 190px;
+}
+
+@keyframes phone-dialog-arrive {
+  from { opacity: 0; transform: translateY(18px) scale(.975); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes hud-dialog-arrive {
+  from { opacity: 0; transform: translateY(28px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes in-game-speaker-arrive {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes in-game-dialog-prompt {
+  50% { opacity: .42; transform: translateY(4px); }
+}
+
+@media (max-width: 760px) {
+  #app #field-dialogue.field-dialogue {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left: max(10px, env(safe-area-inset-left));
+    width: auto;
+    min-height: 88px;
+    max-height: 34vh;
+    margin: 0;
+    padding: 27px 42px 16px 20px;
+    overflow: visible;
+    font-size: clamp(13px, 3.7vw, 16px);
+  }
+
+  #app #field-dialogue.field-dialogue.field-dialogue-phone {
+    min-height: 106px;
+    max-height: 40vh;
+    padding: 42px 42px 18px 22px;
+  }
+
+  #app #field-dialogue.field-dialogue::before { right: 22px; left: 22px; }
+
+  #app #field-dialogue.field-dialogue .field-dialogue-speaker {
+    left: 20px;
+    min-width: 112px;
+    max-width: 70vw;
+    padding: 7px 16px 6px;
+    font-size: 10px;
+  }
+}
+
+html[data-input-profile='touch'] #app #field-dialogue.field-dialogue .field-dialogue-control {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 540px) {
+  #app #field-dialogue.field-dialogue {
+    min-height: 82px;
+    max-height: 46vh;
+    padding-top: 25px;
+    padding-bottom: 14px;
+  }
+
+  #app #field-dialogue.field-dialogue.field-dialogue-phone {
+    min-height: 88px;
+    padding-top: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app #field-dialogue.field-dialogue,
+  #app #field-dialogue.field-dialogue .field-dialogue-speaker,
+  #app #field-dialogue.field-dialogue .field-dialogue-prompt {
+    animation: none;
+  }
+}

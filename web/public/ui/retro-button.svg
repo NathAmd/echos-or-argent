@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 48" shape-rendering="crispEdges">
+  <style>
+    .gold { animation: gold 4.6s steps(18, end) infinite; }
+    @keyframes gold { 50% { fill: #dfad62; } }
+    @media (prefers-reduced-motion: reduce) { .gold { animation: none; } }
+  </style>
+  <path fill="#071119" d="M8 0h76v3h6v4h4v5h2v24h-2v5h-4v4h-6v3H8v-3H3v-4H0V7h3V3h5z"/>
+  <path fill="#604522" d="M9 2h74v2h6v4h3v4h2v24h-2v4h-3v4h-6v2H9v-2H4v-4H2V8h2V4h5zm1 5v2H7v30h3v2h73v-2h4V9h-4V7z"/>
+  <path class="gold" fill="#c99546" d="M11 5h71v1H11zM5 11h1v26H5zm83 0h1v26h-1zM11 42h71v1H11z"/>
+  <path fill="#172832" d="M10 9h73v2h4v26h-4v2H10v-2H7V11h3z"/>
+  <path fill="#0b171f" d="M12 12h69v24H12z"/>
+  <path fill="#263a42" d="M12 12h69v2H12z" opacity=".75"/>
+</svg>

@@ -1,0 +1,30 @@
+services:
+  social-signaling:
+    networks:
+      - server-tunnel
+
+  cloudflared:
+    image: "${CLOUDFLARED_IMAGE:-cloudflare/cloudflared:latest}"
+    pull_policy: always
+    restart: unless-stopped
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --loglevel
+      - info
+      - run
+    environment:
+      TUNNEL_TOKEN: "${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in the server-only .env}"
+    depends_on:
+      social-signaling:
+        condition: service_started
+    networks:
+      - server-tunnel
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+
+networks:
+  server-tunnel:

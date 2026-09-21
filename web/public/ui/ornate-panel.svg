@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 240" preserveAspectRatio="none">
+  <metadata>Original PokeMaster geometric UI frame. Dedicated to the public domain under CC0-1.0.</metadata>
+  <defs>
+    <linearGradient id="edge" x1="0" x2="1">
+      <stop stop-color="#82531e"/>
+      <stop offset=".22" stop-color="#e2b35f"/>
+      <stop offset=".52" stop-color="#7d4d19"/>
+      <stop offset=".78" stop-color="#d5a34e"/>
+      <stop offset="1" stop-color="#684015"/>
+    </linearGradient>
+  </defs>
+  <path d="M18 2h964l16 16v204l-16 16H18L2 222V18Z" fill="none" stroke="#41280f" stroke-width="4" vector-effect="non-scaling-stroke"/>
+  <path d="M24 5h952l19 19v192l-19 19H24L5 216V24Z" fill="none" stroke="url(#edge)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+  <path d="M35 13h930l13 13v188l-13 13H35l-13-13V26Z" fill="none" stroke="#d7a757" stroke-opacity=".38" vector-effect="non-scaling-stroke"/>
+  <g fill="none" stroke="#d7a757" stroke-width="2" vector-effect="non-scaling-stroke">
+    <path d="M7 53h22l12-12h34M7 187h22l12 12h34M993 53h-22l-12-12h-34M993 187h-22l-12 12h-34"/>
+    <path d="M18 27l11 11-11 11L7 38Zm0 164 11 11-11 11-11-11Zm964-164 11 11-11 11-11-11Zm0 164 11 11-11 11-11-11Z"/>
+  </g>
+  <g fill="#e1b15e">
+    <path d="m49 20 5 5-5 5-5-5Zm902 0 5 5-5 5-5-5ZM49 210l5 5-5 5-5-5Zm902 0 5 5-5 5-5-5Z"/>
+    <circle cx="76" cy="25" r="2"/><circle cx="924" cy="25" r="2"/><circle cx="76" cy="215" r="2"/><circle cx="924" cy="215" r="2"/>
+  </g>
+</svg>

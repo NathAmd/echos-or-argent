@@ -1,0 +1,20 @@
+# NG+ duo 1v2 : Solo Germignon compatible avec Monotype Plante.
+pokemaster-debug-tape-v1 campagne-premier-badge-ngp-duo-solo-monotype
+
+REPORT avant-campagne-ngp-duo-solo-monotype
+BOT ZEPHYR ngp-duo-solo-monotype
+WAIT journey=passed 15m
+EXPECT campaignPreset=ngp-duo-solo-monotype
+EXPECT campaignMode=new-game-plus
+EXPECT campaignModules=all-battles-in-duo,monotype,solo-run
+EXPECT initialPartySize=1
+EXPECT initialPartySpecies=152
+EXPECT doubleBattleSeen=true
+EXPECT minDoublePlayerParticipants=1
+EXPECT zephyrBadge=true
+EXPECT falknerDefeated=true
+EXPECT battle=none
+EXPECT script=false
+EXPECT saveReady=true
+REPORT badge-zephyr-ngp-duo-solo-monotype-valide
+STOP

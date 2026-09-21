@@ -1,0 +1,15 @@
+# Le Safari n’a pas de PV joueur : cette batterie vérifie son UI puis choisit Fuite.
+pokemaster-debug-tape-v1 safari-sortie
+
+WAIT battle=safari 10m
+WAIT battleUi=command 1m
+REPORT safari-commandes-visibles
+EXPECT-ERROR Safari DEBUG GODMODE ON
+EXPECT-ERROR Safari DEBUG INSTANT-KILL
+EXPECT-ERROR Safari DEBUG SUICIDE
+PRESS up
+WAIT 150ms
+PRESS confirm
+PRESS-UNTIL confirm battle=none 180ms 2m
+REPORT safari-retour-terrain
+STOP

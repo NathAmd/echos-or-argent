@@ -1,0 +1,112 @@
+/* Transition partagée par les panneaux de PC du monde. */
+@keyframes in-game-dialog-arrive {
+  from { opacity: 0; transform: translateY(28px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Pad terrain pour appareils tactiles. La couche reste sous les vraies
+   interfaces du jeu; elle ne devient jamais un second clavier ou une modale. */
+.game-touch-controls {
+  position: absolute;
+  z-index: calc(var(--ui-z-overlay) - 2);
+  right: max(12px, calc(env(safe-area-inset-right) + 8px));
+  bottom: max(12px, calc(env(safe-area-inset-bottom) + 8px));
+  left: max(12px, calc(env(safe-area-inset-left) + 8px));
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  pointer-events: none;
+  user-select: none;
+  animation: game-touch-controls-arrive 240ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.game-touch-controls[hidden] { display: none; }
+
+.game-touch-dpad,
+.game-touch-actions {
+  display: grid;
+  pointer-events: none;
+}
+
+.game-touch-dpad {
+  grid-column: 1;
+  grid-template: repeat(3, 54px) / repeat(3, 54px);
+}
+
+.game-touch-actions {
+  grid-column: 3;
+  grid-template: repeat(3, 48px) / repeat(3, 48px);
+}
+
+.game-touch-control {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  place-items: center;
+  border: 2px solid rgb(var(--ui-theme-bright-rgb) / .64);
+  color: var(--ui-theme-paper);
+  background:
+    linear-gradient(145deg, rgb(var(--ui-theme-accent-rgb) / .42), transparent 58%),
+    rgb(var(--ui-theme-panel-rgb) / .68);
+  box-shadow: inset 0 1px rgb(255 255 255 / .22), 0 5px 0 rgb(0 0 0 / .42);
+  font: 900 17px/1 var(--ui-font-display);
+  opacity: .78;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  transition: opacity 90ms linear, transform 90ms ease, filter 90ms linear;
+}
+
+.game-touch-control[data-pressed='true'] {
+  filter: brightness(1.3);
+  opacity: 1;
+  transform: translateY(3px) scale(.96);
+  box-shadow: inset 0 2px 7px rgb(0 0 0 / .34), 0 2px 0 rgb(0 0 0 / .45);
+}
+
+.game-touch-control-up { grid-area: 1 / 2; border-radius: 16px 16px 5px 5px; }
+.game-touch-control-left { grid-area: 2 / 1; border-radius: 16px 5px 5px 16px; }
+.game-touch-control-right { grid-area: 2 / 3; border-radius: 5px 16px 16px 5px; }
+.game-touch-control-down { grid-area: 3 / 2; border-radius: 5px 5px 16px 16px; }
+
+.game-touch-control-a,
+.game-touch-control-b {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+}
+
+.game-touch-control-a { grid-area: 2 / 3; }
+.game-touch-control-b { grid-area: 3 / 2; }
+.game-touch-control-menu {
+  grid-area: 1 / 2;
+  width: 52px;
+  height: 34px;
+  align-self: end;
+  border-radius: 17px;
+  font-size: 14px;
+}
+
+@keyframes game-touch-controls-arrive {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .game-touch-controls {
+    right: max(8px, env(safe-area-inset-right));
+    bottom: max(8px, env(safe-area-inset-bottom));
+    left: max(8px, env(safe-area-inset-left));
+  }
+
+  .game-touch-dpad { grid-template: repeat(3, 46px) / repeat(3, 46px); }
+  .game-touch-actions { grid-template: repeat(3, 41px) / repeat(3, 41px); }
+  .game-touch-control-a, .game-touch-control-b { width: 54px; height: 54px; }
+  .game-touch-control-menu { width: 46px; height: 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-touch-controls { animation: none; }
+  .game-touch-control { transition: none; }
+}

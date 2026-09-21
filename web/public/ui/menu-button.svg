@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 104" preserveAspectRatio="none">
+  <metadata>Original PokeMaster geometric button background. Dedicated to the public domain under CC0-1.0.</metadata>
+  <defs>
+    <linearGradient id="fill" x1="0" x2="1">
+      <stop stop-color="#0a1821"/>
+      <stop offset=".7" stop-color="#06121a"/>
+      <stop offset="1" stop-color="#020a0f"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" x2="1">
+      <stop stop-color="#b27b31"/>
+      <stop offset=".42" stop-color="#634016"/>
+      <stop offset=".8" stop-color="#bb8438"/>
+      <stop offset="1" stop-color="#57340f"/>
+    </linearGradient>
+  </defs>
+  <path d="M16 3h588l32 49-32 49H16L3 88V16Z" fill="url(#fill)" stroke="url(#edge)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+  <path d="M24 9h573l27 43-27 43H24L10 83V21Z" fill="none" stroke="#d2a052" stroke-opacity=".28" vector-effect="non-scaling-stroke"/>
+  <path d="M4 30h12L29 17h29M4 74h12l13 13h29M582 13h16l8 12h10M582 91h16l8-12h10" fill="none" stroke="#cc9849" stroke-opacity=".55" vector-effect="non-scaling-stroke"/>
+  <g fill="#bd8738"><path d="m26 46 6 6-6 6-6-6Zm566 0 6 6-6 6-6-6Z"/><circle cx="48" cy="16" r="2"/><circle cx="48" cy="88" r="2"/><circle cx="578" cy="16" r="2"/><circle cx="578" cy="88" r="2"/></g>
+</svg>

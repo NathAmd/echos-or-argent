@@ -1,0 +1,787 @@
+/* Chrome commun du menu : burger flottant, Options et cadre des écrans métier. */
+
+.ui-menu {
+  --menu-accent: var(--ui-theme-accent);
+  --menu-accent-dark: var(--ui-theme-secondary);
+  --ui-ink: var(--ui-theme-ink);
+  --ui-gold: var(--ui-theme-accent);
+  --ui-gold-bright: var(--ui-theme-bright);
+  --ui-paper: var(--ui-theme-paper);
+  --ui-muted: var(--ui-theme-muted);
+  box-sizing: border-box;
+  isolation: isolate;
+  color: var(--ui-paper);
+  font-family: var(--ui-font-display);
+}
+
+.ui-menu :where(.ui-menu-button, .ui-menu-back) {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+/* Le menu burger ne porte aucune grande surface : les boutons sont la coque. */
+.ui-menu.ui-menu-root {
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: max(18px, env(safe-area-inset-left));
+  z-index: var(--ui-z-overlay);
+  display: grid;
+  width: min(390px, calc(100% - 36px));
+  height: auto;
+  max-height: calc(var(--visual-viewport-height, 100svh) - 36px);
+  max-inline-size: calc(100cqw - var(--runtime-safe-left) - var(--runtime-safe-right));
+  max-block-size: calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom));
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  clip-path: none;
+  transform: translateY(-50%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  animation: ui-menu-overlay-in 150ms ease-out both;
+}
+
+.ui-menu-root .ui-menu-navigation-root {
+  position: relative;
+  display: grid;
+  grid-auto-rows: clamp(48px, 6.2svh, 58px);
+  align-content: center;
+  gap: clamp(6px, .8vmin, 9px);
+  min-width: 0;
+  max-height: calc(var(--visual-viewport-height, 100svh) - 72px);
+  max-block-size: calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom));
+  padding: clamp(14px, 2svh, 22px) 0 8px clamp(66px, 6vw, 88px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.ui-menu-root .ui-menu-navigation-root::-webkit-scrollbar {
+  display: none;
+}
+
+.ui-menu-root .ui-menu-navigation-root::before {
+  content: '';
+  position: absolute;
+  top: -4%;
+  bottom: -4%;
+  left: 14px;
+  width: 46px;
+  border-left: 2px solid var(--ui-theme-accent);
+  border-radius: 52% 0 0 52%;
+  pointer-events: none;
+  box-shadow: -5px 0 18px rgb(var(--ui-theme-accent-rgb) / .13);
+}
+
+.ui-menu-root .ui-menu-navigation-root::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--ui-theme-bright);
+  border-radius: 50%;
+  pointer-events: none;
+  background: var(--ui-theme-ink);
+  box-shadow: 0 0 0 4px rgb(var(--ui-theme-accent-rgb) / .22), 4px 4px 0 rgba(0, 0, 0, .46);
+  transform: translateY(-50%);
+}
+
+.ui-menu-root .ui-menu-button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  /* L'arc translate chaque entrée vers la droite. Sa largeur rend exactement
+     ce déplacement afin que le dernier pixel reste dans le menu. */
+  width: min(calc(100% - var(--arc-offset, 0px)), 370px);
+  min-height: 48px;
+  padding: 7px 42px;
+  overflow: hidden;
+  border: 2px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  translate: var(--arc-offset, 0) 0;
+  transition: width 170ms cubic-bezier(.2, .8, .2, 1), translate 170ms cubic-bezier(.2, .8, .2, 1), border-color 140ms ease, box-shadow 170ms ease, color 140ms ease, filter 140ms ease;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+  animation: in-game-menu-item-arrive 330ms cubic-bezier(.16, .84, .28, 1) both;
+  animation-delay: calc(70ms + var(--menu-order, 0) * 44ms);
+}
+
+.ui-menu-root .ui-menu-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  display: none;
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  border-left: 12px solid var(--ui-theme-bright);
+  pointer-events: none;
+  filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, .52));
+  transform: translateY(-50%);
+}
+
+.ui-menu-root .ui-menu-button::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--ui-theme-texture);
+  background-position: 0 0;
+  background-size: var(--ui-theme-texture-size);
+  image-rendering: pixelated;
+  opacity: var(--ui-theme-texture-opacity);
+  transition: opacity 160ms ease;
+  animation: ui-theme-texture-shift 22s steps(12, end) infinite;
+}
+
+html[data-input-modality='pointer'] .ui-menu-root .ui-menu-button:hover:not(:disabled),
+.ui-menu-root .ui-menu-button:focus-visible,
+.ui-menu-root .ui-menu-button[aria-current='true'] {
+  width: min(calc(100% - var(--arc-offset, 0px) - 7px), 392px);
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  filter: none;
+  translate: calc(var(--arc-offset, 0px) + 7px) 0;
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 1px;
+}
+
+.ui-menu-button[data-multiplayer-global-target='requests'] .multiplayer-global-menu-value {
+  display: grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid var(--ui-theme-bright);
+  color: var(--ui-theme-ink);
+  background: var(--ui-theme-accent);
+  animation: multiplayer-notification 900ms steps(2, end) infinite;
+}
+
+.ui-menu-button:focus-visible .multiplayer-global-menu-value { color: var(--ui-theme-ink); }
+
+html[data-input-modality='pointer'] .ui-menu-root .ui-menu-button:hover:not(:disabled)::before,
+.ui-menu-root .ui-menu-button:focus-visible::before,
+.ui-menu-root .ui-menu-button[aria-current='true']::before {
+  display: block;
+  animation: in-game-menu-pointer 720ms ease-in-out infinite;
+}
+
+html[data-input-modality='pointer'] .ui-menu-root .ui-menu-button:hover:not(:disabled)::after,
+.ui-menu-root .ui-menu-button:focus-visible::after,
+.ui-menu-root .ui-menu-button[aria-current='true']::after {
+  opacity: .1;
+}
+
+.ui-menu-root .game-menu-button-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-column: 1;
+  align-content: center;
+  min-width: 0;
+}
+
+.ui-menu-root .game-menu-button-label {
+  overflow: hidden;
+  font-size: clamp(16px, 1.5vw, 21px);
+  font-weight: 620;
+  letter-spacing: .075em;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Cadre de détail partagé. Les feuilles métier chargées ensuite adaptent son gabarit. */
+#game-menu.ui-menu.ui-menu-detail {
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  z-index: calc(var(--ui-z-overlay) + 1);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(860px, calc(100% - 28px));
+  height: min(620px, calc(100% - 28px), calc(var(--visual-viewport-height, 100svh) - 28px));
+  max-height: min(calc(100% - 28px), calc(var(--visual-viewport-height, 100svh) - 28px));
+  max-inline-size: calc(100cqw - var(--runtime-safe-left) - var(--runtime-safe-right));
+  max-block-size: calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom));
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid var(--ui-line);
+  border-radius: 0;
+  background: var(--ui-surface-shell);
+  background-clip: padding-box;
+  box-shadow: var(--ui-shadow-panel);
+  clip-path: none;
+  transform: translate(-50%, -50%);
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  animation: ui-menu-screen-in 150ms ease-out both;
+}
+
+/* La matière de thème vit sur un seul calque d'ambiance. Le contenu et les
+   contrôles gardent ainsi leur contraste au lieu d'empiler le même motif. */
+#game-menu.ui-menu.ui-menu-detail::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--ui-theme-texture);
+  background-position: 0 0;
+  background-size: var(--ui-theme-texture-size);
+  image-rendering: pixelated;
+  opacity: var(--ui-theme-texture-opacity);
+  animation: ui-theme-texture-shift 26s steps(12, end) infinite;
+}
+
+#game-menu.ui-menu.ui-menu-detail > * {
+  position: relative;
+  z-index: 1;
+}
+
+#game-menu.ui-menu.ui-menu-detail[data-screen='options'] {
+  width: min(560px, calc(100% - 28px));
+  height: min(520px, calc(100% - 28px), calc(var(--visual-viewport-height, 100svh) - 28px));
+}
+
+#game-menu.ui-menu > .ui-menu-header {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto minmax(20px, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  min-height: 58px;
+  padding: 8px clamp(14px, 2.4vw, 24px);
+  overflow: hidden;
+  border: 0;
+  border-bottom: 1px solid var(--ui-line);
+  color: var(--ui-theme-bright);
+  background: transparent;
+  box-shadow: none;
+}
+
+#game-menu.ui-menu > .ui-menu-header h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: clamp(18px, 2.2vw, 27px);
+  font-weight: 760;
+  letter-spacing: .07em;
+  line-height: 1;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 16px rgb(var(--ui-theme-bright-rgb) / .18);
+  white-space: nowrap;
+}
+
+#game-menu.ui-menu > .ui-menu-header h2::after {
+  display: none;
+  content: none;
+}
+
+#game-menu.ui-menu > .ui-menu-header .game-menu-header-rule {
+  height: 1px;
+  margin-inline: clamp(10px, 2vw, 22px);
+  border: 0;
+  background: var(--ui-theme-accent);
+  opacity: .48;
+  box-shadow: none;
+}
+
+#game-menu.ui-menu .ui-menu-back {
+  display: grid;
+  min-width: 86px;
+  min-height: 40px;
+  padding: 7px 12px;
+  place-items: center;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+html[data-input-modality='pointer'] #game-menu.ui-menu .ui-menu-back:hover:not(:disabled),
+#game-menu.ui-menu .ui-menu-back:focus-visible,
+#game-menu.ui-menu .ui-menu-back[aria-current='true'] {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 1px;
+}
+
+#game-menu.ui-menu .ui-menu-back kbd,
+#game-menu.ui-menu .ui-menu-hint::before {
+  box-sizing: border-box;
+  display: grid;
+  width: auto;
+  min-width: 24px;
+  height: 23px;
+  min-height: 0;
+  padding: 1px 5px 3px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line-active);
+  border-radius: 2px;
+  color: var(--ui-theme-bright);
+  background: var(--ui-surface-input);
+  background-clip: padding-box;
+  box-shadow: inset 0 -2px rgb(var(--ui-theme-accent-rgb) / .25), 0 3px 8px rgba(0, 0, 0, .28);
+  font: 900 10px/1 var(--ui-font-pixel);
+  letter-spacing: 0;
+  text-align: center;
+}
+
+#game-menu.ui-menu .ui-menu-back[aria-current='true'] kbd,
+#game-menu.ui-menu .ui-menu-back:focus-visible kbd {
+  color: var(--ui-theme-ink);
+  background: transparent;
+}
+
+#game-menu.ui-menu-detail .game-menu-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 34%) minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  gap: clamp(10px, 1.5vw, 18px);
+  padding: clamp(10px, 1.6vw, 18px);
+  overflow: hidden;
+  background: transparent;
+}
+
+#game-menu.ui-menu.ui-menu-detail > :not(.ui-menu-header) {
+  min-block-size: 0;
+  max-block-size: 100%;
+}
+
+#game-menu.ui-menu-detail .game-menu-layout.game-menu-layout-content-only {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#game-menu.ui-menu-detail .game-menu-list {
+  display: grid;
+  grid-auto-rows: min-content;
+  align-content: start;
+  min-width: 0;
+  min-height: 0;
+  gap: 10px;
+  padding: 0 6px 0 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  scrollbar-color: var(--ui-theme-accent) transparent;
+  scrollbar-width: thin;
+}
+
+#game-menu.ui-menu-detail .game-menu-list-section {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+#game-menu.ui-menu-detail .game-menu-list-section + .game-menu-list-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ui-line-soft);
+}
+
+#game-menu.ui-menu-detail .game-menu-list-section > h3 {
+  position: static;
+  margin: 0 0 3px;
+  padding: 0 2px;
+  overflow: hidden;
+  border: 0;
+  color: var(--ui-theme-accent);
+  background: transparent;
+  box-shadow: none;
+  font: 800 10px/1.25 var(--ui-font-pixel);
+  letter-spacing: .08em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#game-menu.ui-menu-detail:where(:not([data-screen='bag']):not([data-screen='team']):not([data-screen='pokedex']):not([data-screen='pokegear'])) .game-menu-list-section > .ui-menu-button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  min-height: 52px;
+  padding: 7px 12px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  transition: border-color 130ms ease, color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease, translate 150ms ease;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+#game-menu.ui-menu-detail:where(:not([data-screen='bag']):not([data-screen='team']):not([data-screen='pokedex']):not([data-screen='pokegear'])) .game-menu-list-section > .ui-menu-button::before,
+#game-menu.ui-menu-detail:where(:not([data-screen='bag']):not([data-screen='team']):not([data-screen='pokedex']):not([data-screen='pokegear'])) .game-menu-list-section > .ui-menu-button::after {
+  content: none;
+}
+
+html[data-input-modality='pointer'] #game-menu.ui-menu-detail:where(:not([data-screen='bag']):not([data-screen='team']):not([data-screen='pokedex']):not([data-screen='pokegear'])) .game-menu-list-section > .ui-menu-button:hover:not(:disabled),
+#game-menu.ui-menu-detail:where(:not([data-screen='bag']):not([data-screen='team']):not([data-screen='pokedex']):not([data-screen='pokegear'])) .game-menu-list-section > .ui-menu-button:focus-visible,
+#game-menu.ui-menu-detail:where(:not([data-screen='bag']):not([data-screen='team']):not([data-screen='pokedex']):not([data-screen='pokegear'])) .game-menu-list-section > .ui-menu-button[aria-current='true'] {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  filter: brightness(1.06);
+  translate: 2px 0;
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 1px;
+}
+
+#game-menu.ui-menu-detail .game-menu-button-copy {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  gap: 3px;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] .game-menu-button-copy {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] > .options-menu {
+  align-content: start;
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] > .options-menu::-webkit-scrollbar { display: none; }
+
+#game-menu.ui-menu-detail[data-screen='options'] .options-menu-section {
+  gap: 6px;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] .options-menu-section + .options-menu-section {
+  margin: 2px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--ui-line-soft);
+  border-left: 0;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] .options-menu-section > .ui-menu-button {
+  min-height: 46px;
+  padding-block: 6px;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] [data-options-adjustable='true'] [data-menu-state-value] {
+  display: grid;
+  grid-template-columns: 12px minmax(42px, auto) 12px;
+  align-items: center;
+  gap: 4px;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] [data-options-adjustable='true'] [data-menu-state-value]::before { content: '‹'; }
+#game-menu.ui-menu-detail[data-screen='options'] [data-options-adjustable='true'] [data-menu-state-value]::after { content: '›'; }
+
+#game-menu.ui-menu-detail[data-screen='options'] [data-options-adjustable='true'][aria-current='true'] [data-menu-state-value]::before {
+  animation: options-menu-left-cue 700ms steps(2, end) infinite;
+}
+
+#game-menu.ui-menu-detail[data-screen='options'] [data-options-adjustable='true'][aria-current='true'] [data-menu-state-value]::after {
+  animation: options-menu-right-cue 700ms steps(2, end) infinite;
+}
+
+@keyframes options-menu-left-cue { 50% { translate: -2px 0; } }
+@keyframes options-menu-right-cue { 50% { translate: 2px 0; } }
+
+#game-menu.ui-menu-detail .game-menu-button-label {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 760;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#game-menu.ui-menu-detail [data-menu-state-value] {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ui-theme-bright);
+  font: 800 10px/1.15 var(--ui-font-pixel);
+  letter-spacing: .05em;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#game-menu.ui-menu-detail .ui-menu-button[aria-current='true'] [data-menu-state-value],
+#game-menu.ui-menu-detail .ui-menu-button:focus-visible [data-menu-state-value] {
+  color: var(--ui-theme-ink);
+}
+
+#game-menu.ui-menu-detail:not([data-screen='pokegear']):not([data-screen^='pokegear-']) .game-menu-rom-asset {
+  display: block;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#game-menu.ui-menu-detail .game-menu-content {
+  position: relative;
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: clamp(14px, 2.2vw, 26px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  color: var(--ui-theme-paper);
+  background: transparent;
+  box-shadow: none;
+  font-size: clamp(12px, 1.25vw, 15px);
+  line-height: 1.5;
+}
+
+#game-menu.ui-menu.ui-menu-detail :where(
+  .game-menu-layout,
+  .game-menu-content,
+  .game-menu-list,
+  .options-menu
+) {
+  overscroll-behavior: contain;
+}
+
+#game-menu.ui-menu-detail .game-menu-content h3 {
+  margin: 0 0 8px;
+  color: var(--ui-theme-paper);
+  font-size: clamp(18px, 2.2vw, 28px);
+  letter-spacing: .025em;
+}
+
+#game-menu.ui-menu-detail .game-menu-content p {
+  margin: 8px 0;
+}
+
+#game-menu.ui-menu-detail .game-menu-option-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: 10px 0 18px;
+  border-top: 1px solid var(--ui-line);
+}
+
+#game-menu.ui-menu-detail .game-menu-option-summary :where(dt, dd) {
+  min-width: 0;
+  margin: 0;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--ui-line-soft);
+}
+
+#game-menu.ui-menu-detail .game-menu-option-summary dd {
+  color: var(--ui-theme-bright);
+  font-weight: 800;
+  text-align: right;
+}
+
+#game-menu.ui-menu :where(h1, h2, h3, p, strong, small, span, label, button, input, dt, dd) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#game-menu.ui-menu :where(p, dt, dd) {
+  overflow-wrap: anywhere;
+}
+
+@keyframes ui-menu-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ui-menu-screen-in {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 8px)) scale(.995); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes in-game-menu-item-arrive {
+  from { opacity: 0; transform: translateX(-38px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes in-game-menu-pointer {
+  50% { transform: translate(5px, -50%); }
+}
+
+@media (max-width: 600px) {
+  .ui-menu.ui-menu-root {
+    left: max(8px, env(safe-area-inset-left));
+    width: min(374px, calc(100% - 16px));
+    max-height: calc(var(--visual-viewport-height, 100svh) - 16px);
+  }
+
+  .ui-menu-root .ui-menu-navigation-root {
+    grid-auto-rows: minmax(46px, auto);
+    max-height: calc(var(--visual-viewport-height, 100svh) - 28px);
+    gap: 5px;
+    padding: 6px 0 6px 34px;
+  }
+
+  .ui-menu-root .ui-menu-navigation-root::before {
+    left: 8px;
+    width: 22px;
+  }
+
+  .ui-menu-root .ui-menu-navigation-root::after {
+    left: 2px;
+  }
+
+  .ui-menu-root .ui-menu-button {
+    min-height: 46px;
+    padding-inline: 22px;
+  }
+
+  html[data-input-modality='pointer'] .ui-menu-root .ui-menu-button:hover:not(:disabled),
+  .ui-menu-root .ui-menu-button:focus-visible,
+  .ui-menu-root .ui-menu-button[aria-current='true'] {
+    width: min(calc(100% - var(--arc-offset, 0px) - 5px), 392px);
+    translate: calc(var(--arc-offset, 0px) + 5px) 0;
+  }
+
+  .ui-menu-root .game-menu-button-label {
+    font-size: 12px;
+  }
+
+  #game-menu.ui-menu.ui-menu-detail {
+    width: calc(100% - 16px);
+    height: min(calc(100% - 16px), calc(var(--visual-viewport-height, 100svh) - 16px));
+    max-height: min(calc(100% - 16px), calc(var(--visual-viewport-height, 100svh) - 16px));
+  }
+
+  #game-menu.ui-menu.ui-menu-detail[data-screen='options'] {
+    height: min(520px, calc(100% - 16px), calc(var(--visual-viewport-height, 100svh) - 16px));
+  }
+
+  #game-menu.ui-menu > .ui-menu-header {
+    min-height: 54px;
+    padding: 7px 10px;
+  }
+
+  #game-menu.ui-menu > .ui-menu-header h2 { font-size: 18px; }
+  #game-menu.ui-menu > .ui-menu-header .game-menu-header-rule { margin-inline: 8px; }
+  #game-menu.ui-menu .ui-menu-back { min-width: 64px; min-height: 40px; padding: 6px 8px; }
+
+  #game-menu.ui-menu-detail .game-menu-layout {
+    grid-template: minmax(140px, 40%) minmax(0, 1fr) / minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  #game-menu.ui-menu-detail .game-menu-layout.game-menu-layout-content-only {
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  }
+
+  #game-menu.ui-menu-detail .game-menu-list-section > .ui-menu-button {
+    min-height: 48px;
+  }
+
+  #game-menu.ui-menu-detail .game-menu-content { padding: 14px; }
+}
+
+@media (orientation: landscape) and (max-height: 540px) {
+  .ui-menu.ui-menu-root {
+    left: max(12px, env(safe-area-inset-left));
+    width: min(390px, calc(100% - 24px));
+  }
+
+  .ui-menu-root .ui-menu-navigation-root {
+    grid-auto-rows: minmax(44px, auto);
+    max-height: calc(var(--visual-viewport-height, 100svh) - 20px);
+    gap: 4px;
+    padding-block: 4px;
+    padding-left: 28px;
+  }
+
+  .ui-menu-root .ui-menu-button { min-height: 44px; }
+
+  #game-menu.ui-menu.ui-menu-detail {
+    width: min(760px, calc(100% - 20px));
+    height: min(calc(100% - 20px), calc(var(--visual-viewport-height, 100svh) - 20px));
+    max-height: min(calc(100% - 20px), calc(var(--visual-viewport-height, 100svh) - 20px));
+  }
+
+  #game-menu.ui-menu.ui-menu-detail[data-screen='options'] { width: min(560px, calc(100% - 20px)); }
+
+  #game-menu.ui-menu > .ui-menu-header { min-height: 50px; padding-block: 5px; }
+
+  #game-menu.ui-menu-detail .game-menu-layout {
+    grid-template: minmax(0, 1fr) / minmax(200px, 34%) minmax(0, 1fr);
+    padding: 7px;
+  }
+
+  #game-menu.ui-menu-detail .game-menu-layout.game-menu-layout-content-only {
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  }
+
+  #game-menu.ui-menu-detail .game-menu-list-section > .ui-menu-button { min-height: 46px; }
+}
+
+html[data-input-profile='touch'] #game-menu.ui-menu .ui-menu-back,
+html[data-input-profile='touch'] #game-menu.ui-menu-detail:not([data-screen='bag']):not([data-screen='team']):not([data-screen='pokedex']):not([data-screen='pokegear']) .ui-menu-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-menu.ui-menu-root,
+  #game-menu.ui-menu.ui-menu-detail,
+  .ui-menu-root .ui-menu-button,
+  .ui-menu-root .ui-menu-button::before {
+    animation: none;
+  }
+
+  .ui-menu :where(.ui-menu-button, .ui-menu-back) {
+    transition-duration: .01ms;
+  }
+}

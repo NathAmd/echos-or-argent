@@ -1,0 +1,640 @@
+/*
+ * Progression Pokémon : apprentissage, évolution et éclosion.
+ * Les sprites et les chaînes restent fournis par la ROM ; cette feuille ne
+ * possède que la composition, la matière thémée et les animations d'interface.
+ */
+
+.battle-screen.is-evolution-only {
+  grid-template: 1fr;
+  background: rgb(var(--ui-theme-panel-rgb) / .98);
+}
+
+.battle-screen.is-evolution-only > .battle-stage {
+  visibility: hidden;
+}
+
+.battle-evolution {
+  position: absolute;
+  z-index: var(--ui-z-critical, 80);
+  inset: max(4px, env(safe-area-inset-top)) max(4px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  place-items: center;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  padding: clamp(12px, 3vmin, 28px) clamp(10px, 3vw, 34px);
+  overflow: hidden;
+  border: 0;
+  color: var(--ui-theme-paper);
+  background:
+    var(--ui-theme-texture),
+    radial-gradient(ellipse at 50% 45%, rgb(var(--ui-theme-accent-rgb) / .3), transparent 45%),
+    linear-gradient(180deg, rgb(var(--ui-theme-panel-rgb) / .98), rgb(var(--ui-theme-panel-soft-rgb) / .94));
+  box-shadow: inset 0 0 90px rgba(0, 0, 0, .58);
+  font-family: var(--ui-font-display);
+}
+
+.battle-evolution[hidden] { display: none; }
+
+.battle-evolution::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: .24;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgb(var(--ui-theme-bright-rgb) / .13) 4px),
+    linear-gradient(110deg, transparent 22%, rgb(var(--ui-theme-bright-rgb) / .08) 48%, transparent 72%);
+  background-size: auto, 180% 100%;
+  pointer-events: none;
+  animation: progression-scene-shimmer 7s steps(14, end) infinite alternate;
+}
+
+.battle-evolution-rings {
+  position: absolute;
+  inset: 7% 16% 20%;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.battle-evolution-rings i {
+  position: absolute;
+  width: min(56vmin, 440px);
+  aspect-ratio: 1;
+  border: clamp(2px, .45vmin, 4px) solid rgb(var(--ui-theme-bright-rgb) / .58);
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 18px var(--ui-theme-glow), inset 0 0 14px rgb(var(--ui-theme-accent-rgb) / .1);
+}
+
+.battle-evolution-rings i:nth-child(2) {
+  width: min(43vmin, 340px);
+  border-color: rgb(var(--ui-theme-accent-rgb) / .7);
+  border-style: dashed;
+}
+
+.battle-evolution-rings i:nth-child(3) {
+  width: min(68vmin, 535px);
+  border-color: rgb(var(--ui-theme-paper-rgb) / .34);
+}
+
+.battle-evolution.is-transforming .battle-evolution-rings i {
+  animation: progression-evolution-ring 1.15s steps(12, end) var(--progression-ring-delay, 0s) infinite;
+}
+
+.battle-evolution.is-transforming .battle-evolution-rings i:nth-child(2) {
+  --progression-ring-delay: -380ms;
+  animation-direction: reverse;
+}
+
+.battle-evolution.is-transforming .battle-evolution-rings i:nth-child(3) {
+  --progression-ring-delay: -760ms;
+}
+
+.battle-evolution-particles {
+  position: absolute;
+  inset: 12% 18% 24%;
+  pointer-events: none;
+}
+
+.battle-evolution-particles i {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: 8px;
+  aspect-ratio: 1;
+  opacity: 0;
+  background: var(--ui-theme-bright);
+  box-shadow: 0 0 12px var(--ui-theme-glow);
+  rotate: 45deg;
+}
+
+.battle-evolution-particles i:nth-child(1) { --progression-particle-x: -23vw; --progression-particle-y: -18vh; }
+.battle-evolution-particles i:nth-child(2) { --progression-particle-x: 21vw; --progression-particle-y: -15vh; --progression-particle-delay: -180ms; }
+.battle-evolution-particles i:nth-child(3) { --progression-particle-x: -27vw; --progression-particle-y: 3vh; --progression-particle-delay: -360ms; }
+.battle-evolution-particles i:nth-child(4) { --progression-particle-x: 26vw; --progression-particle-y: 6vh; --progression-particle-delay: -540ms; }
+.battle-evolution-particles i:nth-child(5) { --progression-particle-x: -13vw; --progression-particle-y: -27vh; --progression-particle-delay: -720ms; }
+.battle-evolution-particles i:nth-child(6) { --progression-particle-x: 10vw; --progression-particle-y: -25vh; --progression-particle-delay: -900ms; }
+.battle-evolution-particles i:nth-child(7) { --progression-particle-x: -18vw; --progression-particle-y: 18vh; --progression-particle-delay: -1080ms; }
+.battle-evolution-particles i:nth-child(8) { --progression-particle-x: 17vw; --progression-particle-y: 19vh; --progression-particle-delay: -1260ms; }
+
+.battle-evolution.is-transforming .battle-evolution-particles i {
+  animation: progression-evolution-particle 1.45s steps(9, end) var(--progression-particle-delay, 0s) infinite;
+}
+
+.battle-evolution-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  background: var(--ui-theme-paper);
+  pointer-events: none;
+}
+
+.battle-evolution.is-transforming .battle-evolution-flash {
+  animation: progression-evolution-flash 3.6s steps(1, end) both;
+}
+
+.battle-evolution-kicker {
+  z-index: 6;
+  max-width: min(620px, 92%);
+  padding: 5px 13px;
+  overflow: hidden;
+  border: 1px solid var(--ui-line-strong);
+  color: var(--ui-theme-ink);
+  background: var(--ui-theme-selection);
+  box-shadow: inset 0 0 0 1px rgb(var(--ui-theme-paper-rgb) / .42), 3px 3px 0 rgba(0, 0, 0, .52), 0 0 14px var(--ui-theme-glow);
+  clip-path: var(--ui-control-shape);
+  font: 900 clamp(10px, 1.6vmin, 14px)/1.1 var(--ui-font-pixel);
+  letter-spacing: .16em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-evolution-sprites {
+  position: relative;
+  z-index: 3;
+  width: min(54vmin, 410px);
+  height: min(54vmin, 410px);
+}
+
+.battle-evolution-sprite {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  image-rendering: pixelated;
+}
+
+.battle-evolution-sprite canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 16px 0 rgba(0, 0, 0, .3));
+}
+
+.battle-evolution-sprite[data-shiny='true']::after {
+  content: '';
+  position: absolute;
+  inset: 17%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(var(--ui-theme-bright-rgb) / .28), rgb(var(--ui-theme-accent-rgb) / .14) 42%, transparent 70%);
+  filter: blur(12px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: progression-holo-aura 2.4s steps(12, end) infinite;
+}
+
+.battle-evolution-to { opacity: 0; }
+.battle-evolution.is-intro .battle-evolution-from { animation: progression-evolution-breathe 900ms steps(6, end) both; }
+.battle-evolution.is-transforming .battle-evolution-from { animation: progression-evolution-old 3.6s steps(36, end) both; }
+.battle-evolution.is-transforming .battle-evolution-to { animation: progression-evolution-new 3.6s steps(36, end) both; }
+.battle-evolution.is-complete .battle-evolution-from { opacity: 0; }
+.battle-evolution.is-complete .battle-evolution-to { opacity: 1; scale: 1; animation: progression-evolution-arrived 760ms steps(8, end) both; }
+.battle-evolution.is-cancelled .battle-evolution-from { opacity: 1; animation: progression-evolution-arrived 620ms steps(7, end) both; }
+.battle-evolution.is-cancelled .battle-evolution-to { opacity: 0; }
+
+.battle-evolution h2 {
+  z-index: 6;
+  max-width: min(760px, 94%);
+  margin: -8px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--ui-theme-bright);
+  font-size: clamp(20px, 3.6vmin, 36px);
+  line-height: 1;
+  text-align: center;
+  text-shadow: 3px 3px 0 rgb(var(--ui-theme-panel-rgb) / .92), 0 0 16px var(--ui-theme-glow);
+}
+
+.battle-evolution p {
+  z-index: 6;
+  box-sizing: border-box;
+  width: min(740px, 94%);
+  min-height: 2.7em;
+  margin: 6px 0 0;
+  padding: 10px 34px 10px 15px;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), rgb(var(--ui-theme-panel-rgb) / .74);
+  box-shadow: inset 4px 0 rgb(var(--ui-theme-accent-rgb) / .5), var(--ui-shadow-panel);
+  clip-path: var(--ui-control-shape);
+  font-size: clamp(13px, 1.9vmin, 18px);
+  font-weight: 800;
+  text-align: left;
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+}
+
+.battle-evolution-prompt {
+  position: absolute;
+  right: max(24px, calc(env(safe-area-inset-right) + 14px));
+  bottom: max(18px, calc(env(safe-area-inset-bottom) + 12px));
+  z-index: 7;
+  display: none;
+  color: var(--ui-theme-bright);
+  filter: drop-shadow(0 0 8px var(--ui-theme-glow));
+  animation: progression-prompt 700ms steps(2, end) infinite;
+}
+
+.battle-evolution:is(.is-complete, .is-cancelled) .battle-evolution-prompt { display: block; }
+
+/* L'éclosion partage la scène et remplace uniquement sa lumière et son rythme. */
+.battle-evolution.is-hatching {
+  background:
+    var(--ui-theme-texture),
+    radial-gradient(ellipse at 50% 54%, rgb(var(--ui-theme-bright-rgb) / .34), transparent 34%),
+    linear-gradient(180deg, rgb(var(--ui-theme-secondary-rgb) / .88), rgb(var(--ui-theme-panel-soft-rgb) / .96) 68%, rgb(var(--ui-theme-panel-rgb) / .98));
+}
+
+.battle-evolution.is-hatching::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 47%;
+  left: 50%;
+  width: min(46vmin, 350px);
+  height: min(9vmin, 70px);
+  border-radius: 50%;
+  background: rgb(var(--ui-theme-panel-rgb) / .38);
+  filter: blur(2px);
+  transform: translate(-50%, 145%);
+}
+
+.battle-evolution.is-hatching .battle-evolution-rings i { border-color: rgb(var(--ui-theme-paper-rgb) / .72); }
+
+.battle-evolution.is-hatching.is-transforming .battle-evolution-from {
+  opacity: 1;
+  filter: none;
+  animation: progression-egg-crack 3.2s steps(20, end) both;
+}
+
+.battle-evolution.is-hatching.is-transforming .battle-evolution-to {
+  opacity: 0;
+  animation: none;
+}
+
+.battle-evolution.is-hatching.is-transforming .battle-evolution-flash {
+  animation: progression-egg-flash 3.2s steps(1, end) both;
+}
+
+.battle-evolution.is-hatching .egg-hatch-icon {
+  width: 58%;
+  height: 58%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 18px 0 rgb(var(--ui-theme-panel-rgb) / .28));
+}
+
+.battle-evolution.is-hatched .battle-evolution-to canvas {
+  animation: progression-egg-arrival 780ms steps(9, end) both;
+}
+
+/* L'apprentissage conserve un fond transparent : l'en-tête et les boutons
+   portent seuls la matière afin de rester lisibles sans grande coque. */
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves.battle-learn-move {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: auto;
+  bottom: auto;
+  left: max(16px, env(safe-area-inset-left));
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  box-sizing: border-box;
+  width: min(680px, calc(100% - 32px));
+  max-height: calc(100% - var(--battle-dialog-height) - var(--battle-footer-height) - 34px);
+  gap: 7px 9px;
+  padding: 0;
+  overflow: auto;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  scrollbar-width: none;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves.battle-learn-move::-webkit-scrollbar {
+  display: none;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 3px 12px;
+  min-width: 0;
+  padding: 10px 14px 11px;
+  overflow: hidden;
+  border: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), rgb(var(--ui-theme-panel-rgb) / .74);
+  box-shadow: inset 4px 0 rgb(var(--ui-theme-accent-rgb) / .52), var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  animation: progression-shell-in 180ms ease-out both;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header > span {
+  grid-row: 1 / 3;
+  align-self: center;
+  max-width: 15ch;
+  padding: 4px 7px;
+  overflow: hidden;
+  color: var(--ui-theme-ink);
+  background: var(--ui-theme-selection);
+  box-shadow: inset 0 -2px rgb(var(--ui-theme-accent-rgb) / .36);
+  clip-path: var(--ui-control-shape);
+  font: 900 9px/1.1 var(--ui-font-pixel);
+  letter-spacing: .08em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header :where(h3, p, strong) {
+  min-width: 0;
+  margin: 0;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header h3 {
+  overflow: hidden;
+  color: var(--ui-theme-paper);
+  font-size: clamp(15px, 1.7vw, 21px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header p {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--ui-theme-muted);
+  font-size: clamp(9px, 1vw, 12px);
+  font-weight: 700;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header > strong {
+  grid-column: 1 / -1;
+  padding-top: 6px;
+  overflow-wrap: anywhere;
+  border-top: 1px solid rgb(var(--ui-theme-accent-rgb) / .3);
+  color: var(--ui-theme-bright);
+  font-size: clamp(10px, 1.1vw, 13px);
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option,
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-cancel {
+  position: relative;
+  inset: auto;
+  box-sizing: border-box;
+  width: auto;
+  min-width: 0;
+  min-height: 58px;
+  padding: 7px 26px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  rotate: none;
+  translate: 0;
+  animation: progression-control-in 180ms ease-out both;
+  transition: color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease, translate 150ms ease;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option:nth-of-type(2),
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option:nth-of-type(4) {
+  animation-delay: 35ms;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option small {
+  display: block;
+  overflow: hidden;
+  color: var(--ui-theme-accent);
+  font: 800 8px/1.1 var(--ui-font-pixel);
+  letter-spacing: .1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option > strong {
+  display: block;
+  overflow: hidden;
+  color: var(--ui-theme-paper);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option > span {
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--ui-theme-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-cancel {
+  grid-column: 1 / -1;
+  min-height: 44px;
+  text-align: center;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves button[aria-current='true'],
+html[data-input-modality='pointer'] .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves button:hover:not(:disabled),
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  filter: brightness(1.04);
+  outline: none;
+  translate: 4px 0;
+}
+
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves button[aria-current='true'] :where(small, strong, span),
+html[data-input-modality='pointer'] .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves button:hover:not(:disabled) :where(small, strong, span),
+.battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves button:focus-visible :where(small, strong, span) {
+  color: var(--ui-theme-ink);
+}
+
+@keyframes progression-scene-shimmer {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 0, 100% 0; }
+}
+
+@keyframes progression-evolution-ring {
+  0% { opacity: 0; transform: rotate(0) scale(.22); }
+  18% { opacity: .86; }
+  82% { opacity: .42; }
+  100% { opacity: 0; transform: rotate(1turn) scale(1.28); }
+}
+
+@keyframes progression-evolution-particle {
+  0% { opacity: 0; transform: translate(0, 0) rotate(45deg) scale(.4); }
+  18%, 70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--progression-particle-x), var(--progression-particle-y)) rotate(225deg) scale(1.2); }
+}
+
+@keyframes progression-evolution-flash {
+  0%, 20%, 38%, 54%, 68%, 80%, 90% { opacity: 0; }
+  19%, 37%, 53%, 67%, 79%, 89% { opacity: .22; }
+  96%, 100% { opacity: .92; }
+}
+
+@keyframes progression-evolution-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2%); }
+}
+
+@keyframes progression-evolution-old {
+  0%, 13%, 25%, 37%, 49%, 61%, 73% { opacity: 1; filter: brightness(0) invert(1); transform: scale(1); }
+  19%, 31%, 43%, 55%, 67%, 79%, 100% { opacity: 0; filter: brightness(0) invert(1); transform: scale(.68); }
+  86% { opacity: 1; filter: brightness(0) invert(1); transform: scale(.55); }
+}
+
+@keyframes progression-evolution-new {
+  0%, 13%, 25%, 37%, 49%, 61%, 73% { opacity: 0; filter: brightness(0) invert(1); transform: scale(1.3); }
+  19%, 31%, 43%, 55%, 67%, 79%, 86% { opacity: 1; filter: brightness(0) invert(1); transform: scale(1); }
+  94%, 100% { opacity: 1; filter: brightness(0) invert(1); transform: scale(1.08); }
+}
+
+@keyframes progression-evolution-arrived {
+  0%, 100% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-7%) scale(1.08); }
+}
+
+@keyframes progression-egg-crack {
+  0%, 12% { transform: translateY(0) rotate(0); }
+  16%, 28% { transform: translateY(-3%) rotate(-4deg); }
+  20%, 32% { transform: translateY(-3%) rotate(4deg); }
+  36%, 52% { transform: translateY(0) rotate(0); }
+  56%, 60%, 64%, 68%, 72%, 76% { transform: translateY(-5%) rotate(-6deg) scale(1.04); }
+  58%, 62%, 66%, 70%, 74%, 78% { transform: translateY(-5%) rotate(6deg) scale(1.04); }
+  82% { opacity: 1; transform: translateY(-9%) scale(1.12); }
+  100% { opacity: 0; transform: translateY(-9%) scale(1.34); }
+}
+
+@keyframes progression-egg-flash {
+  0%, 54%, 65%, 76%, 86% { opacity: 0; }
+  55%, 66%, 77% { opacity: .22; }
+  88%, 100% { opacity: .94; }
+}
+
+@keyframes progression-egg-arrival {
+  0% { opacity: 0; transform: scale(.55); filter: brightness(5); }
+  42% { opacity: 1; transform: scale(1.13); filter: brightness(1.8); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+
+@keyframes progression-holo-aura {
+  0%, 100% { opacity: .38; transform: scale(.94); }
+  50% { opacity: .72; transform: scale(1.06); }
+}
+
+@keyframes progression-prompt {
+  0%, 49% { opacity: 1; translate: 0 0; }
+  50%, 100% { opacity: .45; translate: 0 3px; }
+}
+
+@keyframes progression-shell-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes progression-control-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Portrait moderne, notamment 390 × 844. */
+@media (max-width: 620px) {
+  .battle-evolution {
+    padding: max(12px, env(safe-area-inset-top)) 10px max(16px, env(safe-area-inset-bottom));
+  }
+
+  .battle-evolution-sprites {
+    width: min(70vw, 290px);
+    height: min(70vw, 290px);
+  }
+
+  .battle-evolution-rings { inset: 14% 4% 21%; }
+  .battle-evolution h2 { max-width: 96%; margin-top: -4px; font-size: clamp(19px, 6vw, 28px); }
+  .battle-evolution p { width: 94%; padding: 9px 30px 9px 12px; font-size: clamp(12px, 3.7vw, 16px); }
+
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves.battle-learn-move {
+    top: max(10px, env(safe-area-inset-top));
+    right: max(10px, env(safe-area-inset-right));
+    left: max(10px, env(safe-area-inset-left));
+    grid-template-columns: minmax(0, 1fr);
+    width: auto;
+    max-height: calc(100% - var(--battle-dialog-height) - var(--battle-footer-height) - 28px);
+    gap: 6px;
+  }
+
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header,
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-cancel {
+    grid-column: 1;
+  }
+
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    padding: 8px 10px;
+  }
+
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header > span {
+    grid-row: auto;
+    justify-self: start;
+    max-width: 100%;
+  }
+
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option {
+    min-height: 54px;
+    padding: 6px 24px;
+  }
+}
+
+/* Paysage compact, notamment 960 × 540. */
+@media (min-width: 700px) and (max-height: 560px) {
+  .battle-evolution { padding: 9px 18px 12px; }
+  .battle-evolution-sprites { width: min(44vmin, 250px); height: min(44vmin, 250px); }
+  .battle-evolution-rings { inset: 5% 17% 18%; }
+  .battle-evolution h2 { margin-top: -5px; font-size: clamp(18px, 3.5vmin, 26px); }
+  .battle-evolution p { min-height: 42px; margin-top: 4px; padding-block: 7px; font-size: clamp(11px, 1.8vmin, 14px); }
+
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-moves.battle-learn-move {
+    top: max(10px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    width: min(680px, 72vw);
+    max-height: calc(100% - var(--battle-dialog-height) - var(--battle-footer-height) - 20px);
+    gap: 4px 6px;
+  }
+
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-header { padding: 6px 9px; }
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-option { min-height: 46px; padding-block: 4px; }
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] .battle-learn-move-cancel { min-height: 38px; padding-block: 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-evolution::before,
+  .battle-evolution.is-transforming :is(.battle-evolution-rings i, .battle-evolution-particles i, .battle-evolution-flash),
+  .battle-evolution:is(.is-intro, .is-transforming, .is-complete, .is-cancelled) :is(.battle-evolution-from, .battle-evolution-to),
+  .battle-evolution.is-hatching.is-transforming :is(.battle-evolution-from, .battle-evolution-to, .battle-evolution-flash),
+  .battle-evolution.is-hatched .battle-evolution-to canvas,
+  .battle-evolution-sprite[data-shiny='true']::after,
+  .battle-evolution-prompt,
+  .battle-screen:not([hidden])[data-ui-mode='learnMove'] :is(.battle-learn-move-header, .battle-learn-move-option, .battle-learn-move-cancel) {
+    animation: none;
+    transition: none;
+  }
+}

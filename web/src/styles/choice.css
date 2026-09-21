@@ -1,0 +1,439 @@
+/*
+ * Choix terrain : choix flottants ordinaires, équipe et starter ROM.
+ * La boutique conserve son propriétaire spécialisé.
+ */
+
+#app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) {
+  position: absolute;
+  z-index: 9;
+  right: max(8vw, calc(env(safe-area-inset-right) + 14px));
+  bottom: clamp(150px, 21vh, 190px);
+  left: auto;
+  display: grid;
+  box-sizing: border-box;
+  width: min(210px, calc(100% - 28px));
+  min-width: 0;
+  max-height: min(46svh, 360px, calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  gap: 6px;
+  padding: 7px;
+  overflow-x: visible;
+  overflow-y: auto;
+  border: 0;
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: transparent;
+  box-shadow: none;
+  clip-path: none;
+  font-family: var(--ui-font-pixel);
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  animation: in-game-choice-arrive 220ms 80ms cubic-bezier(.16, .84, .28, 1) both;
+}
+
+#app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop)::-webkit-scrollbar {
+  display: none;
+}
+
+#app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) button {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 6px 15px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font: 800 clamp(12px, 1.05vw, 15px)/1.15 var(--ui-font-pixel);
+  letter-spacing: .045em;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition: border-color 130ms ease, color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease, transform 150ms ease;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+html[data-input-modality='pointer'] #app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) button:hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.1);
+}
+
+#app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) button[aria-current='true'],
+#app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 2px;
+}
+
+/* Choix d'équipe : une grille légère, sans coque concurrente autour des boutons. */
+#app #field-choice.field-choice.field-choice-party {
+  position: absolute;
+  z-index: 9;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(190px, 1fr));
+  box-sizing: border-box;
+  width: min(620px, calc(100% - 36px));
+  max-height: min(72svh, 520px, calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  gap: 7px;
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+  color: var(--ui-theme-paper);
+  background: transparent;
+  box-shadow: none;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  animation: in-game-choice-arrive 220ms 80ms cubic-bezier(.16, .84, .28, 1) both;
+}
+
+#app #field-choice.field-choice.field-choice-party::-webkit-scrollbar {
+  display: none;
+}
+
+#app #field-choice.field-choice.field-choice-party button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 66px;
+  padding: 6px 14px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font-family: var(--ui-font-display);
+  text-align: left;
+  touch-action: manipulation;
+  transition: border-color 130ms ease, color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease, transform 150ms ease;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+#app #field-choice.field-choice.field-choice-party button:last-child {
+  display: block;
+  grid-column: 1 / -1;
+  min-height: 44px;
+  text-align: center;
+}
+
+html[data-input-modality='pointer'] #app #field-choice.field-choice.field-choice-party button:hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.1);
+}
+
+#app #field-choice.field-choice.field-choice-party button[aria-current='true'],
+#app #field-choice.field-choice.field-choice-party button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 2px;
+}
+
+#app #field-choice.field-choice.field-choice-party .field-party-choice-icon {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+}
+
+#app #field-choice.field-choice.field-choice-party .field-party-choice-icon[data-shiny='true'] {
+  animation: ui-holo-sprite 2.4s steps(12, end) infinite;
+}
+
+#app #field-choice.field-choice.field-choice-party .field-party-choice-identity {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+#app #field-choice.field-choice.field-choice-party .field-party-choice-identity :where(strong, small) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app #field-choice.field-choice.field-choice-party .field-party-choice-identity small {
+  color: var(--ui-theme-muted);
+  font-size: 12px;
+}
+
+#app #field-choice.field-choice.field-choice-party button[aria-current='true'] .field-party-choice-identity small,
+#app #field-choice.field-choice.field-choice-party button:focus-visible .field-party-choice-identity small {
+  color: color-mix(in srgb, var(--ui-theme-ink) 72%, var(--ui-theme-muted));
+}
+
+/* Starter : scène ROM transparente et trois contrôles flottants. */
+#app #field-choice.field-choice.field-choice-starter {
+  box-sizing: border-box;
+  position: absolute;
+  isolation: isolate;
+  z-index: var(--ui-z-overlay);
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  width: min(760px, calc(100% - 28px));
+  height: min(430px, calc(var(--visual-viewport-height, 100svh) - 28px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  gap: clamp(7px, 1.4vw, 13px);
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: transparent;
+  box-shadow: none;
+  clip-path: none;
+  translate: -50% -50%;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font-family: var(--ui-font-display);
+  perspective: 900px;
+  animation: starter-choice-enter 200ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+#app #field-choice.field-choice.field-choice-starter::before,
+#app #field-choice.field-choice.field-choice-starter::after {
+  display: none;
+  content: none;
+}
+
+#app #field-choice.field-choice-starter .starter-machine-model {
+  position: absolute;
+  z-index: 0;
+  inset: 0 5% 88px;
+  width: 90%;
+  height: calc(100% - 88px);
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 15px 11px rgba(0, 0, 0, .34));
+  image-rendering: pixelated;
+}
+
+#app #field-choice.field-choice-starter button {
+  --starter-control-offset: 7px;
+  --starter-control-tilt: 0deg;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: minmax(58px, 1fr) auto;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 126px;
+  padding: 8px 8px 10px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  translate: 0 var(--starter-control-offset);
+  rotate: var(--starter-control-tilt);
+  font-family: var(--ui-font-display);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: translate 170ms cubic-bezier(.2, .8, .25, 1), rotate 170ms cubic-bezier(.2, .8, .25, 1), border-color 130ms ease, color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease;
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+#app #field-choice.field-choice-starter button:nth-of-type(1) { --starter-control-offset: 12px; --starter-control-tilt: -1.5deg; }
+#app #field-choice.field-choice-starter button:nth-of-type(3) { --starter-control-offset: 12px; --starter-control-tilt: 1.5deg; }
+
+html[data-input-modality='pointer'] #app #field-choice.field-choice-starter button:hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.08);
+  translate: 0 2px;
+}
+
+#app #field-choice.field-choice-starter button[aria-current='true'],
+#app #field-choice.field-choice-starter button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  translate: 0 0;
+  rotate: 0deg;
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 2px;
+}
+
+#app #field-choice.field-choice-starter .starter-pokemon-icon {
+  align-self: center;
+  display: block;
+  width: clamp(58px, 8vw, 76px);
+  height: clamp(58px, 8vw, 76px);
+  object-fit: contain;
+  opacity: .78;
+  filter: drop-shadow(0 7px 6px rgba(0, 0, 0, .42));
+  image-rendering: pixelated;
+  transition: opacity 150ms ease, filter 150ms ease, scale 170ms cubic-bezier(.2, .8, .25, 1);
+}
+
+#app #field-choice.field-choice-starter button[aria-current='true'] .starter-pokemon-icon,
+#app #field-choice.field-choice-starter button:focus-visible .starter-pokemon-icon {
+  opacity: 1;
+  filter: drop-shadow(0 8px 7px rgba(0, 0, 0, .46)) drop-shadow(0 0 7px var(--ui-theme-glow));
+  scale: 1.08;
+  animation: starter-rom-idle 1.5s steps(6, end) infinite;
+}
+
+#app #field-choice.field-choice-starter .starter-name {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding-top: 6px;
+  overflow: hidden;
+  border-top: 1px solid var(--ui-line-soft);
+  color: inherit;
+  font: 900 clamp(10px, 1.45vw, 14px)/1.15 var(--ui-font-pixel);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-input-profile='touch'] #app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) button {
+  min-height: 44px;
+}
+
+@media (max-width: 900px), (max-height: 560px) {
+  #app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(120px, calc(env(safe-area-inset-bottom) + 106px));
+    width: min(182px, calc(100% - 20px));
+    gap: 4px;
+  }
+
+  #app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop) button {
+    min-height: 36px;
+    padding-block: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  #app #field-choice.field-choice.field-choice-starter {
+    width: calc(100% - 20px);
+    height: min(440px, calc(var(--visual-viewport-height, 100svh) - 20px));
+    gap: 5px;
+  }
+
+  #app #field-choice.field-choice-starter .starter-machine-model {
+    right: -10%;
+    left: -10%;
+    width: 120%;
+  }
+
+  #app #field-choice.field-choice-starter button {
+    grid-template-rows: minmax(52px, 1fr) auto;
+    min-height: 116px;
+    padding: 7px 5px 8px;
+  }
+
+  #app #field-choice.field-choice-starter .starter-pokemon-icon {
+    width: clamp(52px, 16vw, 62px);
+    height: clamp(52px, 16vw, 62px);
+  }
+
+  #app #field-choice.field-choice-starter .starter-name { font-size: clamp(9px, 2.8vw, 11px); }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  #app #field-choice.field-choice.field-choice-starter {
+    width: min(720px, calc(100% - 24px));
+    height: min(390px, calc(var(--visual-viewport-height, 100svh) - 20px));
+    gap: 10px;
+  }
+
+  #app #field-choice.field-choice-starter .starter-machine-model {
+    inset-block: -4px 78px;
+    height: calc(100% - 74px);
+  }
+
+  #app #field-choice.field-choice-starter button {
+    min-height: 108px;
+  }
+
+  #app #field-choice.field-choice-starter .starter-pokemon-icon {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+html[data-display-profile='phone-portrait'] #app #field-choice.field-choice.field-choice-party,
+html[data-display-profile='phone-landscape'] #app #field-choice.field-choice.field-choice-party {
+  inset: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  grid-template-columns: 1fr;
+  width: auto;
+  max-height: none;
+  padding: 0;
+}
+
+html[data-display-profile='phone-landscape'] #app #field-choice.field-choice.field-choice-party {
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+}
+
+@media (max-height: 560px) {
+  #app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop),
+  #app #field-choice.field-choice.field-choice-party {
+    right: var(--runtime-safe-right);
+    bottom: var(--runtime-safe-bottom);
+    max-block-size: calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom));
+  }
+}
+
+@keyframes in-game-choice-arrive {
+  from { opacity: 0; transform: translateX(28px) scale(.97); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes starter-choice-enter {
+  from { opacity: 0; scale: .975; }
+  to { opacity: 1; scale: 1; }
+}
+
+@keyframes starter-rom-idle {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app #field-choice.field-choice:not(.field-choice-starter):not(.field-choice-party):not(.field-choice-shop),
+  #app #field-choice.field-choice.field-choice-party,
+  #app #field-choice.field-choice.field-choice-starter,
+  #app #field-choice.field-choice.field-choice-party .field-party-choice-icon[data-shiny='true'],
+  #app #field-choice.field-choice-starter button[aria-current='true'] .starter-pokemon-icon,
+  #app #field-choice.field-choice-starter button:focus-visible .starter-pokemon-icon {
+    animation: none;
+  }
+}

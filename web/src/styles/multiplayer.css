@@ -1,0 +1,856 @@
+/* Multijoueur : écrans fixes, navigation console et matière du thème HGSS actif. */
+
+.multiplayer-shell {
+  --multiplayer-danger: #ef767a;
+  --multiplayer-step: steps(4, end);
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  color: var(--ui-theme-paper);
+  font-family: var(--ui-font-display);
+}
+
+.multiplayer-shell *,
+.multiplayer-overlay * { box-sizing: border-box; }
+
+.multiplayer-shell-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.multiplayer-shell-surface {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(10px, 1.8vmin, 18px);
+  overflow: hidden;
+  background: transparent;
+}
+
+.multiplayer-shell-surface[data-multiplayer-screen='auth'] { place-items: center; }
+
+.multiplayer-shell-button,
+.multiplayer-global-back,
+.multiplayer-trade-picker-entry {
+  min-width: 0;
+  min-height: 44px;
+  padding: 7px 12px;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font: 760 13px/1.1 var(--ui-font-display);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 120ms steps(2, end), color 120ms steps(2, end), background-color 120ms steps(2, end), box-shadow 120ms steps(2, end), translate 120ms steps(2, end);
+  user-select: none;
+}
+
+.multiplayer-shell-button[data-tone='primary'] {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+}
+
+.multiplayer-shell-button[data-tone='danger'] {
+  border-color: rgb(239 118 122 / 72%);
+  color: #fff4f4;
+  background: rgb(94 31 42 / 88%);
+}
+
+.multiplayer-shell-button:disabled,
+.multiplayer-trade-picker-entry:disabled {
+  opacity: .42;
+  cursor: default;
+  filter: grayscale(.35);
+}
+
+html[data-input-modality='pointer'] :where(
+  .multiplayer-shell-button,
+  .multiplayer-global-back,
+  .multiplayer-trade-picker-entry
+):hover:not(:disabled),
+:where(
+  .multiplayer-shell-button,
+  .multiplayer-global-back,
+  .multiplayer-trade-picker-entry,
+  .multiplayer-shell-input
+):focus-visible,
+.multiplayer-trade-picker-entry[aria-current='true'] {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  outline: 2px solid var(--ui-control-line-active);
+  outline-offset: 1px;
+}
+
+.multiplayer-global-menu-value {
+  overflow: hidden;
+  color: var(--ui-theme-bright);
+  font: 800 9px/1.1 var(--ui-font-pixel);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.multiplayer-global-page {
+  position: relative;
+  display: grid;
+  grid-template-rows: 52px minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-line);
+  background: var(--ui-surface-shell);
+  box-shadow: var(--ui-shadow-panel);
+  animation: multiplayer-page-in 150ms steps(3, end) both;
+}
+
+.multiplayer-global-page[hidden],
+.multiplayer-global-menu[hidden] { display: none; }
+
+.multiplayer-global-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--ui-theme-texture);
+  background-size: var(--ui-theme-texture-size);
+  opacity: var(--ui-theme-texture-opacity);
+}
+
+.multiplayer-global-page-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 6px 10px 6px 18px;
+  border-bottom: 1px solid var(--ui-line);
+}
+
+.multiplayer-global-page-header > h2 {
+  color: var(--ui-theme-bright);
+  font-size: clamp(17px, 2.5vmin, 24px);
+  letter-spacing: .07em;
+}
+
+.multiplayer-global-back {
+  display: grid;
+  min-width: 68px;
+  min-height: 38px;
+  padding: 5px 10px;
+  place-items: center;
+}
+
+.multiplayer-global-back kbd {
+  display: grid;
+  min-width: 24px;
+  height: 23px;
+  place-items: center;
+  border: 1px solid var(--ui-control-line-active);
+  color: var(--ui-theme-bright);
+  background: var(--ui-surface-input);
+  font: 900 10px/1 var(--ui-font-pixel);
+}
+
+.multiplayer-global-page > .multiplayer-shell-section {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+}
+
+.multiplayer-global-page[data-multiplayer-screen='friends'] > .multiplayer-shell-section > .multiplayer-shell-section-header .multiplayer-shell-heading,
+.multiplayer-global-page[data-multiplayer-screen='play'] > .multiplayer-shell-section > .multiplayer-shell-heading,
+.multiplayer-global-page[data-multiplayer-screen='requests'] > .multiplayer-shell-section > .multiplayer-shell-heading,
+.multiplayer-global-page[data-multiplayer-screen='session'] > .multiplayer-shell-section > .multiplayer-shell-heading,
+.multiplayer-global-page[data-multiplayer-screen='trade'] > .multiplayer-shell-section > .multiplayer-shell-heading,
+.multiplayer-global-page[data-multiplayer-screen='account'] > .multiplayer-shell-section > .multiplayer-shell-heading {
+  display: none;
+}
+
+.multiplayer-shell-section {
+  display: grid;
+  align-content: start;
+  gap: clamp(7px, 1.4vmin, 12px);
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(10px, 2vmin, 18px);
+  overflow: hidden;
+  color: var(--ui-theme-paper);
+  background: transparent;
+}
+
+.multiplayer-shell-surface[data-multiplayer-screen='auth'] > .multiplayer-shell-section {
+  width: min(580px, 100%);
+  max-height: 100%;
+  border: 1px solid var(--ui-line);
+  background: var(--ui-surface-shell);
+  box-shadow: var(--ui-shadow-panel);
+}
+
+.multiplayer-shell-heading {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: inherit;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.multiplayer-shell-heading-2 { font-size: clamp(16px, 2.4vmin, 22px); }
+.multiplayer-shell-heading-3 {
+  color: var(--ui-theme-accent);
+  font: 800 10px/1.2 var(--ui-font-pixel);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.multiplayer-shell-account-modes,
+.multiplayer-shell-hub-shortcuts,
+.multiplayer-shell-actions,
+.multiplayer-shell-inline-form,
+.multiplayer-shell-password-row,
+.multiplayer-shell-section-header,
+.multiplayer-shell-offer-header,
+.multiplayer-trade-picker-actions,
+.multiplayer-shell-pagination {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.multiplayer-shell-section-header,
+.multiplayer-shell-offer-header { justify-content: space-between; }
+.multiplayer-shell-actions,
+.multiplayer-trade-picker-actions { justify-content: flex-end; }
+.multiplayer-shell-account-modes > *,
+.multiplayer-shell-hub-shortcuts > * { flex: 1; }
+
+.multiplayer-shell-account-modes .multiplayer-shell-button[aria-pressed='true'],
+.multiplayer-shell-hub-shortcut[aria-pressed='true'] {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+}
+
+.multiplayer-shell-account-forms,
+.multiplayer-shell-account-form {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.multiplayer-shell-account-form[hidden] { display: none; }
+
+.multiplayer-shell-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid var(--ui-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-input);
+  font: 750 14px/1 var(--ui-font-display);
+}
+
+.multiplayer-shell-input::placeholder { color: var(--ui-theme-muted); }
+.multiplayer-shell-password-row > .multiplayer-shell-input,
+.multiplayer-shell-inline-form > .multiplayer-shell-input { flex: 1; }
+
+.multiplayer-shell-account-meta {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.multiplayer-shell-identity {
+  margin: 0;
+  color: var(--ui-theme-bright);
+  font-size: clamp(18px, 3vmin, 28px);
+  letter-spacing: .06em;
+}
+
+.multiplayer-shell-account-badge,
+.multiplayer-shell-acceptance {
+  padding: 4px 7px;
+  border: 1px solid var(--ui-line-soft);
+  color: var(--ui-theme-muted);
+  background: var(--ui-surface-input);
+  font: 750 9px/1 var(--ui-font-pixel);
+}
+
+.multiplayer-shell-account-badge[data-account-role='admin'],
+.multiplayer-shell-acceptance[data-accepted='true'] {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-bright);
+}
+
+.multiplayer-shell-hub { grid-template-rows: auto minmax(0, 1fr); }
+.multiplayer-shell-hub-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.multiplayer-shell-hub-choice {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  min-height: 0;
+  padding: clamp(10px, 2.2vmin, 20px);
+  border: 1px solid var(--ui-line-soft);
+  background: rgb(4 10 20 / 18%);
+}
+
+.multiplayer-shell-hub-choice[hidden] { display: none; }
+.multiplayer-shell-hub-choice-actions { justify-content: center; }
+
+.multiplayer-shell-social { grid-template-rows: auto auto minmax(0, 1fr); }
+.multiplayer-shell-paged-list {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 7px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.multiplayer-shell-list {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  list-style: none;
+}
+
+.multiplayer-shell-list[hidden] { display: none; }
+.multiplayer-shell-list-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 54px;
+  padding: 6px 8px;
+  border: 1px solid var(--ui-line-soft);
+  background: var(--ui-surface-input);
+}
+
+.multiplayer-shell-friend {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1px 7px;
+  align-items: center;
+  min-width: 0;
+}
+
+.multiplayer-shell-friend strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.multiplayer-shell-friend .multiplayer-shell-secondary { grid-column: 2; }
+.multiplayer-shell-presence {
+  width: 9px;
+  height: 9px;
+  grid-row: 1 / span 2;
+  border-radius: 50%;
+  background: var(--ui-theme-muted);
+}
+
+.multiplayer-shell-presence[data-online='true'] {
+  background: var(--ui-theme-bright);
+  box-shadow: 0 0 8px rgb(var(--ui-theme-bright-rgb) / .55);
+}
+
+.multiplayer-shell-friend-actions { flex-wrap: wrap; }
+.multiplayer-shell-friend-actions .multiplayer-shell-button { min-height: 38px; padding: 5px 8px; font-size: 11px; }
+.multiplayer-shell-pagination { justify-content: center; }
+.multiplayer-shell-pagination .multiplayer-shell-button { min-width: 48px; min-height: 38px; padding: 4px 10px; }
+.multiplayer-shell-page-counter { color: var(--ui-theme-muted); font: 800 9px/1 var(--ui-font-pixel); }
+
+.multiplayer-shell-requests {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+.multiplayer-shell-requests > .multiplayer-shell-heading { grid-column: 1 / -1; }
+.multiplayer-shell-request-group {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 6px;
+  min-width: 0;
+  min-height: 0;
+  padding: 7px;
+  overflow: hidden;
+  border: 1px solid var(--ui-line-soft);
+}
+
+.multiplayer-shell-secondary,
+.multiplayer-shell-hint,
+.multiplayer-shell-empty {
+  margin: 0;
+  color: var(--ui-theme-muted);
+  font-size: 11px;
+}
+
+.multiplayer-shell-status {
+  display: block;
+  min-width: 0;
+  padding: 8px 10px;
+  overflow: hidden;
+  border-left: 3px solid var(--ui-theme-accent);
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-input);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  animation: multiplayer-status-in 160ms steps(3, end) both;
+}
+
+.multiplayer-shell-status[data-state='error'] {
+  border-left-color: var(--multiplayer-danger);
+  color: #ffe2e2;
+  background: rgb(104 30 43 / 58%);
+}
+
+.multiplayer-shell-session { align-content: center; }
+.multiplayer-shell[data-multiplayer-session-state='searching'] .multiplayer-shell-session .multiplayer-shell-status,
+.multiplayer-shell[data-multiplayer-session-state='inviting'] .multiplayer-shell-session .multiplayer-shell-status,
+.multiplayer-shell[data-multiplayer-session-state='negotiating'] .multiplayer-shell-session .multiplayer-shell-status {
+  border-left-color: var(--ui-theme-bright);
+  animation: multiplayer-status-in 160ms steps(3, end) both, multiplayer-link-pulse 960ms steps(3, end) infinite;
+}
+
+.multiplayer-shell[data-multiplayer-session-state='consent'] .multiplayer-shell-session {
+  animation: multiplayer-consent-in 240ms steps(4, end) both;
+}
+
+.multiplayer-shell-trade { grid-template-rows: minmax(0, 1fr) auto auto; }
+.multiplayer-shell-offers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  min-height: 0;
+}
+
+.multiplayer-shell-offer {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  padding: 9px;
+  overflow: hidden;
+  border: 1px solid var(--ui-line-soft);
+  background: var(--ui-surface-input);
+}
+
+.multiplayer-shell-offer[data-accepted='true'] { border-color: var(--ui-control-line-active); }
+.multiplayer-shell-offer[data-accepted='true'] .multiplayer-shell-acceptance {
+  color: var(--ui-theme-ink);
+  background: var(--ui-theme-accent);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .42);
+  rotate: -2deg;
+  animation: multiplayer-ready-stamp 180ms steps(3, end) both;
+}
+.multiplayer-shell-offer-preview {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+.multiplayer-shell-offer-visual,
+.multiplayer-trade-picker-visual {
+  width: clamp(48px, 9vmin, 72px);
+  height: clamp(48px, 9vmin, 72px);
+  flex: none;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.multiplayer-shell[data-multiplayer-trade-state='negotiating'] .multiplayer-shell-offer:not([data-accepted='true']) .multiplayer-shell-offer-visual {
+  animation: multiplayer-pokemon-idle 880ms steps(2, end) infinite;
+}
+
+.multiplayer-shell[data-multiplayer-trade-state='committing'] .multiplayer-shell-offer[data-offer-owner='local'] {
+  animation: multiplayer-trade-send-local 880ms steps(6, end) both;
+}
+
+.multiplayer-shell[data-multiplayer-trade-state='committing'] .multiplayer-shell-offer[data-offer-owner='remote'] {
+  animation: multiplayer-trade-send-remote 880ms steps(6, end) both;
+}
+
+.multiplayer-shell[data-multiplayer-trade-state='committing'] .multiplayer-shell-status {
+  color: var(--ui-theme-bright);
+  text-align: center;
+  letter-spacing: .1em;
+  animation: multiplayer-trade-message 640ms steps(4, end) infinite;
+}
+
+.multiplayer-shell[data-multiplayer-trade-state='committed'] .multiplayer-shell-offer {
+  animation: multiplayer-trade-return 300ms steps(4, end) both;
+}
+
+.multiplayer-shell[data-multiplayer-trade-state='committed'] .multiplayer-shell-status {
+  border: 2px solid var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  font: 900 clamp(13px, 2.2vmin, 20px)/1.1 var(--ui-font-pixel);
+  letter-spacing: .11em;
+  text-align: center;
+  animation: multiplayer-trade-success 420ms steps(6, end) both;
+}
+
+.multiplayer-shell-offer-copy,
+.multiplayer-trade-picker-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.multiplayer-shell-offer-primary,
+.multiplayer-trade-picker-primary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.multiplayer-shell-offer-details {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 7px;
+  margin: 3px 0 0;
+  color: var(--ui-theme-muted);
+  font-size: 10px;
+}
+
+.multiplayer-shell-offer-details :where(dt, dd) { margin: 0; }
+.multiplayer-shell-offer-details dd { color: var(--ui-theme-paper); text-align: end; }
+
+/* Sélecteur d'équipe : six emplacements visibles, jamais de liste scrollée. */
+.multiplayer-trade-picker {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  inset: 0;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(8px, 2vmin, 16px);
+  overflow: hidden;
+  background: rgb(4 8 17 / 90%);
+  animation: multiplayer-modal-backdrop-in 140ms steps(3, end) both;
+}
+
+.multiplayer-trade-picker[hidden] { display: none; }
+
+.multiplayer-trade-picker-surface {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 9px;
+  width: min(860px, 100%);
+  height: min(560px, 100%);
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(10px, 2vmin, 18px);
+  overflow: hidden;
+  border: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), var(--ui-surface-shell);
+  box-shadow: var(--ui-shadow-panel);
+  animation: multiplayer-modal-panel-in 180ms steps(4, end) both;
+}
+
+.multiplayer-trade-picker-surface > h2 { margin: 0; color: var(--ui-theme-bright); }
+.multiplayer-trade-picker-hint { display: none; }
+.multiplayer-trade-picker-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.multiplayer-trade-picker-entry {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 0;
+  padding: 7px;
+  overflow: hidden;
+  text-align: start;
+}
+
+.multiplayer-trade-picker-secondary,
+.multiplayer-trade-picker-stats,
+.multiplayer-trade-picker-item,
+.multiplayer-trade-picker-current,
+.multiplayer-trade-picker-reserved { color: var(--ui-theme-muted); font-size: 10px; }
+.multiplayer-trade-picker-stats { display: none; }
+.multiplayer-trade-picker-current { color: var(--ui-theme-bright); }
+.multiplayer-trade-picker-reserved { color: #ffb8ba; }
+
+/* Hôte overlay, même cadre que les écrans métier du menu principal. */
+.multiplayer-launcher {
+  position: absolute;
+  z-index: var(--ui-z-overlay);
+  top: 10px;
+  right: 76px;
+}
+
+.multiplayer-overlay {
+  position: absolute;
+  z-index: calc(var(--ui-z-overlay) + 3);
+  display: grid;
+  place-items: center;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  overflow: hidden;
+  background: rgb(2 6 14 / 88%);
+  container-type: size;
+  animation: multiplayer-modal-backdrop-in 150ms steps(3, end) both;
+}
+
+.multiplayer-overlay[hidden] { display: none; }
+.multiplayer-overlay-frame {
+  position: relative;
+  display: grid;
+  grid-template-rows: 52px minmax(0, 1fr);
+  width: min(920px, 100%);
+  height: min(640px, 100%);
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  border: 2px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-shell);
+  box-shadow: var(--ui-shadow-panel);
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  animation: multiplayer-overlay-frame-in 210ms steps(4, end) both;
+}
+
+.multiplayer-overlay-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--ui-theme-texture);
+  background-size: var(--ui-theme-texture-size);
+  opacity: var(--ui-theme-texture-opacity);
+}
+
+/* Comme le menu principal et le Pokématos, le burger d'accueil flotte sans
+   backdrop ni panneau. Les écrans métier retrouvent le cadre dès l'ouverture. */
+.multiplayer-overlay:has(.multiplayer-overlay-content[data-multiplayer-current-screen='home']) {
+  padding: 0;
+  background: transparent;
+}
+
+.multiplayer-overlay-frame:has(.multiplayer-overlay-content[data-multiplayer-current-screen='home']) {
+  grid-template-rows: minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.multiplayer-overlay-frame:has(.multiplayer-overlay-content[data-multiplayer-current-screen='home'])::before,
+.multiplayer-overlay-frame:has(.multiplayer-overlay-content[data-multiplayer-current-screen='home']) > .multiplayer-overlay-header {
+  display: none;
+}
+
+.multiplayer-overlay-content[data-multiplayer-current-screen='home'] > .multiplayer-shell-surface {
+  display: contents;
+}
+
+.multiplayer-overlay-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 6px 10px 6px 18px;
+  border-bottom: 1px solid var(--ui-line);
+}
+
+.multiplayer-overlay-header h2 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ui-theme-bright);
+  font-size: clamp(17px, 2.5vmin, 24px);
+  letter-spacing: .07em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.multiplayer-overlay-close {
+  min-width: 72px;
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid rgb(239 118 122 / 62%);
+  color: #fff4f4;
+  background: rgb(94 31 42 / 88%);
+  font: 750 12px/1 var(--ui-font-display);
+  cursor: pointer;
+}
+
+.multiplayer-overlay-close:focus-visible { outline: 2px solid var(--ui-control-line-active); outline-offset: 1px; }
+.multiplayer-overlay-content {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@keyframes multiplayer-page-in {
+  from { opacity: 0; transform: translateX(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes multiplayer-notification {
+  50% { filter: brightness(1.35); translate: 0 -1px; }
+}
+
+@keyframes multiplayer-status-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes multiplayer-link-pulse {
+  50% { border-left-width: 9px; filter: brightness(1.22); }
+}
+
+@keyframes multiplayer-consent-in {
+  from { opacity: 0; transform: scale(.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes multiplayer-ready-stamp {
+  from { opacity: 0; transform: scale(1.7) rotate(7deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes multiplayer-pokemon-idle {
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes multiplayer-trade-send-local {
+  0% { opacity: 1; transform: translateX(0) scale(1); }
+  55% { opacity: 1; transform: translateX(48%) scale(.82); filter: brightness(1.6); }
+  100% { opacity: .12; transform: translateX(92%) scale(.2); filter: brightness(2); }
+}
+
+@keyframes multiplayer-trade-send-remote {
+  0% { opacity: 1; transform: translateX(0) scale(1); }
+  55% { opacity: 1; transform: translateX(-48%) scale(.82); filter: brightness(1.6); }
+  100% { opacity: .12; transform: translateX(-92%) scale(.2); filter: brightness(2); }
+}
+
+@keyframes multiplayer-trade-message {
+  50% { filter: brightness(1.45); }
+}
+
+@keyframes multiplayer-trade-return {
+  from { opacity: 0; transform: scale(.42); filter: brightness(1.8); }
+  to { opacity: 1; transform: scale(1); filter: none; }
+}
+
+@keyframes multiplayer-trade-success {
+  0% { opacity: 0; transform: scale(.72); }
+  65% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes multiplayer-modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes multiplayer-modal-panel-in {
+  from { opacity: 0; transform: translateY(12px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes multiplayer-overlay-frame-in {
+  from { opacity: 0; transform: scale(.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 680px) {
+  .multiplayer-overlay { padding: 6px; }
+  .multiplayer-overlay-frame { grid-template-rows: 46px minmax(0, 1fr); }
+  .multiplayer-overlay-header { padding-block: 4px; }
+  .multiplayer-shell-surface { padding: 7px; }
+  .multiplayer-global-page { grid-template-rows: 46px minmax(0, 1fr); }
+  .multiplayer-global-page-header { padding-block: 4px; }
+  .multiplayer-shell-section { padding: 8px; }
+  .multiplayer-shell-hub-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .multiplayer-shell-requests { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-rows: minmax(0, 1fr); }
+  .multiplayer-shell-list-item { min-height: 48px; }
+  .multiplayer-shell-friend-actions .multiplayer-shell-button { min-width: 42px; font-size: 10px; }
+  .multiplayer-trade-picker-list { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (orientation: landscape) and (max-height: 540px) {
+  .multiplayer-overlay-frame { width: min(860px, 100%); height: 100%; }
+  .multiplayer-shell-button { min-height: 38px; padding-block: 5px; }
+  .multiplayer-shell-section { gap: 5px; padding: 6px 9px; }
+  .multiplayer-shell-list-item { min-height: 44px; padding-block: 4px; }
+  .multiplayer-trade-picker-surface { height: 100%; padding: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .multiplayer-global-menu-value,
+  .multiplayer-global-page,
+  .multiplayer-shell-status,
+  .multiplayer-shell-session,
+  .multiplayer-shell-acceptance,
+  .multiplayer-shell-offer,
+  .multiplayer-shell-offer-visual,
+  .multiplayer-overlay,
+  .multiplayer-overlay-frame,
+  .multiplayer-trade-picker,
+  .multiplayer-trade-picker-surface { animation: none; }
+  .multiplayer-shell-button,
+  .multiplayer-trade-picker-entry { transition-duration: .01ms; }
+}

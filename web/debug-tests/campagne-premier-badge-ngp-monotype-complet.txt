@@ -1,0 +1,20 @@
+# NG+ simple : transferts, six règles indépendantes et Monotype Plante.
+pokemaster-debug-tape-v1 campagne-premier-badge-ngp-monotype-complet
+
+REPORT avant-campagne-ngp-monotype-complet
+BOT ZEPHYR ngp-simple-full-monotype
+WAIT journey=passed 15m
+EXPECT campaignPreset=ngp-simple-full-monotype
+EXPECT campaignMode=new-game-plus
+EXPECT campaignModules=carry-pokedex,carry-money,nuzlocke,hardcore,permanent-death,randomizer,all-pokemon-accessible,visible-wild-pokemon,monotype
+EXPECT initialPartySize=1
+EXPECT simpleBattleSeen=true
+EXPECT doubleBattleSeen=false
+EXPECT minDoublePlayerParticipants=0
+EXPECT zephyrBadge=true
+EXPECT falknerDefeated=true
+EXPECT battle=none
+EXPECT script=false
+EXPECT saveReady=true
+REPORT badge-zephyr-ngp-monotype-complet-valide
+STOP

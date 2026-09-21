@@ -1,0 +1,230 @@
+/* Confirmations et diagnostic : une seule coque floutée, aucun panneau imbriqué. */
+
+#modal-confirm,
+#bug-report-modal {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: var(--ui-z-modal);
+  top: 50%;
+  left: 50%;
+  display: grid;
+  gap: 10px;
+  max-inline-size: calc(100cqw - var(--runtime-safe-left) - var(--runtime-safe-right));
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--ui-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), var(--ui-surface-shell);
+  background-clip: padding-box;
+  box-shadow: 0 0 0 100vmax rgba(1, 6, 12, .58), var(--ui-shadow-panel);
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  font-family: var(--ui-font-display);
+  image-rendering: pixelated;
+  translate: -50% -50%;
+  animation: modal-enter 170ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+#modal-confirm {
+  grid-template-rows: auto auto auto;
+  width: min(430px, calc(100% - 28px));
+  max-height: min(calc(var(--visual-viewport-height, 100svh) - 28px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  padding: 12px;
+}
+
+.modal-confirm-kicker { display: none; }
+
+#modal-confirm h2,
+#modal-confirm p,
+#bug-report-modal :where(h2, p) {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+#modal-confirm h2 {
+  padding: 8px 12px;
+  border-left: 3px solid var(--ui-theme-accent);
+  color: var(--ui-theme-bright);
+  background: transparent;
+  font-size: clamp(16px, 2.2vw, 21px);
+  line-height: 1.2;
+}
+
+#modal-confirm p {
+  padding: 5px 12px 9px;
+  color: var(--ui-theme-paper);
+  line-height: 1.45;
+}
+
+#modal-confirm p:empty { display: none; }
+
+#modal-confirm nav,
+#bug-report-modal nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+  background: transparent;
+}
+
+#bug-report-modal nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+#modal-confirm button,
+#bug-report-modal button {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 44px;
+  padding: 7px 12px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font-family: var(--ui-font-display);
+  font-weight: 850;
+  text-overflow: ellipsis;
+  image-rendering: pixelated;
+  transition: border-color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease;
+}
+
+html[data-input-modality='pointer'] :where(#modal-confirm, #bug-report-modal) button:hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.1);
+}
+
+#modal-confirm button[aria-current='true'],
+:where(#modal-confirm, #bug-report-modal) button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+}
+
+#bug-report-modal {
+  width: min(620px, calc(100% - 32px));
+  max-height: min(calc(var(--visual-viewport-height, 100svh) - 32px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  padding: clamp(14px, 2.5vw, 22px);
+}
+
+.bug-report-kicker {
+  width: max-content;
+  max-width: 100%;
+  padding: 3px 8px;
+  overflow: hidden;
+  color: var(--ui-theme-ink);
+  background: var(--ui-theme-selection);
+  font: 900 9px/1.2 var(--ui-font-pixel);
+  letter-spacing: .1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#bug-report-modal h2 {
+  color: var(--ui-theme-bright);
+  font-size: clamp(18px, 2.5vw, 23px);
+}
+
+#bug-report-modal p {
+  color: var(--ui-theme-paper);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+#bug-report-modal img {
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 210px;
+  border: 1px solid var(--ui-line);
+  object-fit: contain;
+  background: var(--ui-surface-input);
+}
+
+.bug-report-description-summary {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.bug-report-description-summary > strong {
+  min-width: 0;
+  max-width: 100%;
+  color: var(--ui-theme-bright);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.bug-report-description-summary > p {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 90px;
+  max-height: 150px;
+  margin: 0;
+  padding: 10px;
+  overflow: auto;
+  border: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-input);
+  box-shadow: inset 0 0 0 1px rgb(var(--ui-theme-bright-rgb) / .08);
+  font: inherit;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.bug-report-description-summary > p[data-empty='true'] {
+  color: var(--ui-theme-muted);
+  font-style: italic;
+}
+
+.bug-report-control-hint {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 900 9px/1 var(--ui-font-pixel);
+}
+
+#bug-report-modal small {
+  min-width: 0;
+  max-width: 100%;
+  color: var(--ui-theme-muted);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+html[data-input-profile='touch'] :where(#modal-confirm, #bug-report-modal) button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (max-width: 520px) {
+  #bug-report-modal {
+    width: calc(100% - 20px);
+    max-height: min(calc(var(--visual-viewport-height, 100svh) - 20px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+    padding: 12px;
+  }
+
+  #bug-report-modal nav { grid-template-columns: 1fr; }
+}
+
+@keyframes modal-enter {
+  from { opacity: 0; scale: .96; }
+  to { opacity: 1; scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #modal-confirm,
+  #bug-report-modal { animation: none; }
+}

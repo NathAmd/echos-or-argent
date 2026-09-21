@@ -1,0 +1,82 @@
+name: Validate pull request
+
+on:
+  pull_request: {}
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  client:
+    name: Client quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Verify Node version pin exists
+        run: test -s .node-version
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version-file: 'web/.node-version'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Verify clean tracked release baseline
+        run: node scripts/check-git-reproducibility.mjs
+      - name: Install dependencies
+        run: npm ci
+      - name: Audit client dependencies
+        run: npm audit --audit-level=high
+      - name: Validate source and architecture
+        run: npm run lint
+      - name: Run tests
+        run: npm test
+      - name: Build protected client
+        env:
+          POKEMASTER_PUBLIC_BASE_PATH: /echos-or-argent/
+          POKEMASTER_PUBLIC_ONLINE_SERVER_URL: ''
+        run: npm run build && npm run verify:build
+
+  server:
+    name: Server quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Verify Node version pin exists
+        run: test -s .node-version
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version-file: 'server/.node-version'
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Audit server dependencies
+        run: npm audit --audit-level=high
+      - name: Validate, test and build
+        run: npm run typecheck && npm test && npm run build
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e
+      - name: Validate production image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          push: false
+          cache-from: type=gha,scope=server-pr
+          cache-to: type=gha,mode=max,scope=server-pr

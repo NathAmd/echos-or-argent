@@ -1,0 +1,10 @@
+# Victoire administrative sans consommer de tour, de PP ni de RNG.
+pokemaster-debug-tape-v1 combat-instant-kill
+
+WAIT combat=true 10m
+WAIT debugReady=true 1m
+REPORT avant-victoire-instantanee
+DEBUG INSTANT-KILL
+PRESS-UNTIL confirm battle=none 180ms 2m
+REPORT apres-victoire-instantanee
+STOP

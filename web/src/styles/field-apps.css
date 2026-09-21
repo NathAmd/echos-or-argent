@@ -1,0 +1,566 @@
+/* Mini-applications de terrain alimentées par les données natives. */
+
+:where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: var(--ui-z-overlay);
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: min(820px, calc(100% - 40px));
+  height: min(540px, calc(var(--visual-viewport-height, 100svh) - 40px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  max-inline-size: calc(100cqw - var(--runtime-safe-left) - var(--runtime-safe-right));
+  max-block-size: calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom));
+  min-height: 0;
+  gap: 8px;
+  padding: clamp(11px, 2vw, 16px);
+  overflow: hidden;
+  border: 1px solid var(--ui-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), var(--ui-surface-shell);
+  background-clip: padding-box;
+  box-shadow: var(--ui-shadow-panel);
+  -webkit-backdrop-filter: var(--ui-blur-panel);
+  backdrop-filter: var(--ui-blur-panel);
+  font-family: var(--ui-font-display);
+  image-rendering: pixelated;
+  translate: -50% -50%;
+  animation: field-app-enter 180ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+#field-easy-chat { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+#field-pokeathlon { grid-template-rows: auto minmax(0, 1fr) auto; }
+#field-frontier-records { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+
+:where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 6px 8px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--ui-line);
+  color: var(--ui-theme-bright);
+  background: transparent;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+:where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) > header :where(span, h2, strong) {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) > header span {
+  font: 800 11px/1 var(--ui-font-pixel);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+:where(#field-pokeathlon, #field-frontier-records) > header h2 {
+  font-size: clamp(15px, 2vw, 20px);
+}
+
+#field-easy-chat-categories {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  padding: 2px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+
+#field-easy-chat-categories::-webkit-scrollbar,
+.field-easy-chat-words::-webkit-scrollbar,
+.field-pokeathlon-content::-webkit-scrollbar,
+.field-frontier-records-content::-webkit-scrollbar { display: none; }
+
+.field-easy-chat-words {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  align-content: start;
+  gap: 6px;
+  min-height: 0;
+  padding: 4px 2px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-block: 1px solid var(--ui-line-soft);
+  background: transparent;
+  scrollbar-width: none;
+}
+
+:where(
+  #field-easy-chat-categories button,
+  .field-easy-chat-words button,
+  #field-easy-chat > button,
+  #field-pokeathlon > button,
+  #field-frontier-records > button
+) {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 42px;
+  padding: 6px 12px;
+  overflow: hidden;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font-family: var(--ui-font-display);
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  image-rendering: pixelated;
+  transition: border-color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, filter 130ms ease, transform 150ms ease;
+}
+
+#field-easy-chat-categories button { flex: 0 0 auto; }
+
+:where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) > button {
+  justify-self: end;
+  min-width: 104px;
+}
+
+html[data-input-modality='pointer'] :where(
+  #field-easy-chat-categories button,
+  .field-easy-chat-words button,
+  #field-easy-chat > button,
+  #field-pokeathlon > button,
+  #field-frontier-records > button
+):hover:not(:disabled) {
+  border-color: var(--ui-control-line-active);
+  background: var(--ui-control-surface-hover);
+  filter: brightness(1.1);
+}
+
+#field-easy-chat-categories button[aria-current='true'],
+.field-easy-chat-words button[aria-selected='true'],
+:where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) > button:focus-visible {
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+}
+
+.field-pokeathlon-content,
+.field-frontier-records-content {
+  min-height: 0;
+  padding: 3px 2px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.field-pokeathlon-points {
+  margin: 0 0 8px;
+  padding: 7px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--ui-line);
+  color: var(--ui-theme-bright);
+  background: transparent;
+  font: 900 clamp(13px, 1.7vw, 17px)/1.2 var(--ui-font-pixel);
+  text-align: right;
+}
+
+.field-pokeathlon-records,
+.field-frontier-record-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.field-pokeathlon-records li,
+.field-frontier-record-list li {
+  min-width: 0;
+  min-height: 46px;
+  padding: 7px 10px;
+  border: 1px solid var(--ui-line-soft);
+  color: var(--ui-theme-paper);
+  background: var(--ui-surface-soft);
+  box-shadow: none;
+}
+
+.field-pokeathlon-records li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* PhotoAlbum natif (opcodes 615–618) : panneau compact, scène monde au flash. */
+.field-photo-album {
+  position: absolute;
+  z-index: var(--ui-z-overlay);
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: auto;
+  image-rendering: pixelated;
+}
+
+.field-photo-album[hidden] { display: none; }
+
+.field-photo-album.is-capturing { pointer-events: none; }
+
+.photo-capture-scene {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.field-photo-album.is-capturing::after {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+}
+
+.field-photo-album.is-flashing::after {
+  animation: photo-shutter-flash 140ms steps(2, end) both;
+}
+
+.photo-album-surface {
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(780px, calc(100% - 32px));
+  height: min(520px, calc(var(--visual-viewport-height, 100svh) - 32px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom)));
+  min-height: 0;
+  gap: 10px;
+  padding: clamp(12px, 2vw, 18px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--ui-line);
+  color: var(--ui-theme-paper);
+  background: var(--ui-theme-texture), color-mix(in srgb, var(--ui-surface-shell) 78%, transparent);
+  background-size: auto, auto;
+  box-shadow: var(--ui-shadow-panel);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
+  clip-path: polygon(0 7px, 7px 7px, 7px 0, calc(100% - 7px) 0, calc(100% - 7px) 7px, 100% 7px, 100% calc(100% - 7px), calc(100% - 7px) calc(100% - 7px), calc(100% - 7px) 100%, 7px 100%, 7px calc(100% - 7px), 0 calc(100% - 7px));
+  font-family: var(--ui-font-display);
+  animation: field-app-enter 180ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+.photo-album-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 2px 4px 9px;
+  border-bottom: 1px solid var(--ui-line-soft);
+  background: transparent;
+}
+
+.photo-album-prompt {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ui-theme-bright);
+  font: 900 clamp(13px, 2vw, 18px)/1.25 var(--ui-font-pixel);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo-album-page {
+  flex: 0 0 auto;
+  color: var(--ui-theme-muted);
+  font: 800 11px/1 var(--ui-font-pixel);
+}
+
+.photo-album-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: clamp(6px, 1.3vw, 10px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.photo-album-card,
+.photo-album-action,
+.photo-album-exit {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid var(--ui-control-line);
+  border-radius: 0;
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: var(--ui-control-shadow);
+  clip-path: var(--ui-control-shape);
+  font-family: var(--ui-font-display);
+  transition: transform 140ms ease, filter 120ms ease, border-color 120ms ease, background-color 120ms ease, box-shadow 140ms ease;
+}
+
+.photo-album-card {
+  display: grid;
+  grid-template: minmax(0, 1fr) auto auto / minmax(0, 1fr);
+  align-items: center;
+  gap: 2px;
+  padding: 5px 7px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.photo-album-card-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.photo-album-card-visual :where(canvas, img),
+.photo-album-detail-visual :where(canvas, img) {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.photo-album-card strong,
+.photo-album-card time {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo-album-card strong { font: 800 clamp(10px, 1.5vw, 13px)/1.1 var(--ui-font-display); }
+.photo-album-card time { color: var(--ui-theme-muted); font: 700 9px/1 var(--ui-font-pixel); }
+
+.photo-album-card[aria-current='true'],
+.photo-album-action[aria-current='true'],
+.photo-album-exit:focus-visible {
+  z-index: 1;
+  border-color: var(--ui-control-line-active);
+  color: var(--ui-theme-ink);
+  background: var(--ui-control-surface-selected);
+  box-shadow: var(--ui-control-shadow-selected);
+  transform: translateY(-2px);
+}
+
+.photo-album-card[data-move-source='true'] { outline: 2px dashed var(--ui-theme-bright); outline-offset: -5px; }
+
+html[data-input-modality='pointer'] :where(.photo-album-card, .photo-album-action, .photo-album-exit):hover {
+  border-color: var(--ui-control-line-active);
+  filter: brightness(1.1);
+}
+
+.photo-album-actions,
+.photo-album-confirmation {
+  position: absolute;
+  z-index: 2;
+  right: clamp(14px, 3vw, 24px);
+  bottom: clamp(14px, 3vw, 24px);
+  display: grid;
+  width: min(260px, calc(100% - 28px));
+  gap: 7px;
+}
+
+.photo-album-actions[hidden],
+.photo-album-confirmation[hidden],
+.photo-album-detail[hidden],
+.photo-album-grid[hidden],
+.photo-album-exit[hidden] { display: none; }
+
+.photo-album-confirmation {
+  padding: 12px;
+  border: 1px solid var(--ui-line);
+  background: color-mix(in srgb, var(--ui-surface-shell) 82%, transparent);
+  box-shadow: var(--ui-shadow-panel);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.photo-album-confirmation p {
+  margin: 0 0 3px;
+  color: var(--ui-theme-paper);
+  white-space: pre-line;
+}
+
+.photo-album-confirmation nav { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+
+.photo-album-action,
+.photo-album-exit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 8px 12px;
+  font-weight: 850;
+}
+
+.photo-album-exit { justify-self: end; min-width: 118px; }
+
+.photo-album-keycap {
+  flex: 0 0 auto;
+  min-width: 22px;
+  padding: 3px 5px;
+  border: 1px solid currentColor;
+  color: inherit;
+  background: transparent;
+  font: 800 9px/1 var(--ui-font-pixel);
+  text-align: center;
+}
+
+.photo-album-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(190px, .65fr);
+  gap: clamp(12px, 3vw, 24px);
+  min-height: 0;
+  padding: 8px;
+  overflow: hidden;
+  outline: none;
+}
+
+.photo-album-detail-visual {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--ui-line-soft);
+  background: transparent;
+}
+
+.photo-album-detail-text {
+  align-self: center;
+  margin: 0;
+  color: var(--ui-theme-paper);
+  font: 750 clamp(12px, 1.8vw, 16px)/1.55 var(--ui-font-display);
+  white-space: pre-line;
+}
+
+.photo-album-pokemon[data-shiny='true'] {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ui-theme-bright) 80%, transparent));
+  animation: photo-shiny-holo 2.2s steps(12, end) infinite;
+}
+
+@keyframes photo-shutter-flash {
+  0% { opacity: 0; }
+  25%, 62% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes photo-shiny-holo {
+  0%, 100% { filter: drop-shadow(0 0 3px color-mix(in srgb, var(--ui-theme-bright) 55%, transparent)) brightness(1); }
+  50% { filter: drop-shadow(0 0 9px color-mix(in srgb, var(--ui-theme-bright) 90%, transparent)) brightness(1.18); }
+}
+
+@media (max-width: 560px) {
+  .photo-album-surface { width: calc(100% - 16px); height: min(calc(var(--visual-viewport-height, 100svh) - 16px), calc(100cqh - var(--runtime-safe-top) - var(--runtime-safe-bottom))); padding: 10px; }
+  .photo-album-grid { gap: 5px; }
+  .photo-album-card { padding: 4px; }
+  .photo-album-detail { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
+  .photo-album-detail-text { align-self: end; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-album-surface,
+  .photo-album-pokemon[data-shiny='true'] { animation: none; }
+}
+
+.field-frontier-record-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.field-frontier-record-list li[data-tone='record'] { border-color: var(--ui-control-line-active); }
+
+.field-frontier-record-list :where(span, strong),
+.field-pokeathlon-records :where(span, strong) {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.field-frontier-record-list strong {
+  color: var(--ui-theme-bright);
+  font: 900 clamp(15px, 2.5vw, 22px)/1 var(--ui-font-pixel);
+  text-align: right;
+}
+
+.field-frontier-records-tabs {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--ui-line-soft);
+  color: var(--ui-theme-bright);
+  background: transparent;
+  box-shadow: none;
+}
+
+.field-frontier-records-tabs strong {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-input-profile='touch'] :where(
+  #field-easy-chat-categories button,
+  .field-easy-chat-words button,
+  #field-easy-chat > button,
+  #field-pokeathlon > button,
+  #field-frontier-records > button
+) {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (max-width: 620px) {
+  :where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) {
+    width: calc(100% - 16px);
+    height: calc(var(--visual-viewport-height, 100svh) - 16px);
+    padding: 9px;
+  }
+
+  .field-easy-chat-words,
+  .field-pokeathlon-records,
+  .field-frontier-record-list { grid-template-columns: 1fr; }
+}
+
+@keyframes field-app-enter {
+  from { opacity: 0; scale: .975; }
+  to { opacity: 1; scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(#field-easy-chat, #field-pokeathlon, #field-frontier-records) { animation: none; }
+}

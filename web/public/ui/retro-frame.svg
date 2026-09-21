@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" shape-rendering="crispEdges">
+  <style>
+    .gold-main { animation: gold-main 4.2s steps(18, end) infinite; }
+    .gold-accent { animation: gold-accent 4.2s steps(18, end) infinite; }
+    @keyframes gold-main { 50% { fill: #ffe19a; } }
+    @keyframes gold-accent { 50% { fill: #dfa95b; } }
+    @media (prefers-reduced-motion: reduce) { .gold-main, .gold-accent { animation: none; } }
+  </style>
+  <path fill="#03090d" d="M16 0h64v4h8v4h4v8h4v64h-4v8h-4v4h-8v4H16v-4H8v-4H4v-8H0V16h4V8h4V4h8z"/>
+  <path fill="#73512b" d="M16 2h64v3h8v5h3v6h3v64h-3v6h-3v5h-8v3H16v-3H8v-5H5v-6H2V16h3v-6h3V5h8zm0 6v3h-5v5H8v64h3v5h5v3h64v-3h5v-5h3V16h-3v-5h-5V8z"/>
+  <path class="gold-main" fill="#f0ca78" d="M18 5h60v2H18zM5 18h2v60H5zm84 0h2v60h-2zM18 89h60v2H18z"/>
+  <path class="gold-accent" fill="#c99546" d="M10 10h8v3h-5v5h-3zm68 0h8v8h-3v-5h-5zM10 78h3v5h5v3h-8zm73 0h3v8h-8v-3h5z"/>
+  <path fill="#13232b" d="M14 14h68v3h3v65h-3v3H14v-3h-3V17h3z"/>
+  <path fill="#08141b" d="M18 18h60v2H18zM18 76h60v2H18zM18 20h2v56h-2zm58 0h2v56h-2z"/>
+  <path fill="#1c3038" d="M22 22h52v52H22z"/>
+  <path fill="#071119" d="M24 24h48v48H24z"/>
+  <path fill="#283941" d="M24 24h48v2H24z" opacity=".72"/>
+  <path fill="#c99546" d="M31 14h34v1H31zM31 81h34v1H31zM14 31h1v34h-1zm67 0h1v34h-1z" opacity=".68"/>
+</svg>

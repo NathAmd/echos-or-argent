@@ -1,0 +1,23 @@
+# À lancer avant d’entrer dans un combat, ou pendant son introduction.
+pokemaster-debug-tape-v1 combat-godmode-victoire
+
+WAIT combat=true 10m
+DEBUG GODMODE ON
+EXPECT godmode=true
+WAIT battleUi=command 1m
+REPORT combat-pret-godmode
+
+# Joue un tour par le chemin UI réel pour laisser l’adversaire attaquer.
+PRESS confirm
+WAIT 150ms
+PRESS confirm
+WAIT 3s
+EXPECT combat=true
+REPORT apres-tour-protege
+
+PRESS-UNTIL confirm debugReady=true 180ms 1m
+DEBUG INSTANT-KILL
+PRESS-UNTIL confirm battle=none 180ms 2m
+EXPECT godmode=false
+REPORT victoire-et-retour-terrain
+STOP

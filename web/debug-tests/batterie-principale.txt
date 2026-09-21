@@ -1,0 +1,24 @@
+# Ouverture cartographiée + contrôles terrain/UI de base.
+pokemaster-debug-tape-v1 batterie-principale
+
+REPORT avant-ouverture
+BOT OPENING
+WAIT bot=stopped 10m
+EXPECT flow=bedroom
+EXPECT battle=none
+REPORT campagne-ouverture-terminee
+
+PRESS menu
+WAIT menu=true 5s
+REPORT menu-principal-ouvert
+PRESS cancel
+WAIT menu=false 5s
+
+HOLD right 350ms
+WAIT 500ms
+HOLD left 350ms
+WAIT 500ms
+PRESS confirm
+WAIT 1s
+REPORT terrain-deplacement-interaction
+STOP

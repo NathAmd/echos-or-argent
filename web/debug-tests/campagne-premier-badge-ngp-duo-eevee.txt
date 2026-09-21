@@ -1,0 +1,20 @@
+# NG+ duo : six Évoli réels, deux participants joueur actifs.
+pokemaster-debug-tape-v1 campagne-premier-badge-ngp-duo-eevee
+
+REPORT avant-campagne-ngp-duo-eevee
+BOT ZEPHYR ngp-duo-eevee
+WAIT journey=passed 15m
+EXPECT campaignPreset=ngp-duo-eevee
+EXPECT campaignMode=new-game-plus
+EXPECT campaignModules=all-battles-in-duo,eevee-team
+EXPECT initialPartySize=6
+EXPECT initialPartySpecies=133,133,133,133,133,133
+EXPECT doubleBattleSeen=true
+EXPECT minDoublePlayerParticipants=2
+EXPECT zephyrBadge=true
+EXPECT falknerDefeated=true
+EXPECT battle=none
+EXPECT script=false
+EXPECT saveReady=true
+REPORT badge-zephyr-ngp-duo-eevee-valide
+STOP

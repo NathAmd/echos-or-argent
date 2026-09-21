@@ -1,0 +1,72 @@
+/*
+ * Système UI compact partagé par les menus en jeu.
+ * Les illustrations fonctionnelles restent décodées depuis la ROM locale.
+ * Les fonds de thème sont des matières abstraites originales et raccordables.
+ * Leur seul mouvement est le déplacement discret du vrai bitmap : aucun
+ * motif, halo ou particule de thème n'est reconstruit en CSS.
+ */
+
+html {
+  --ui-theme-accent: #c79232;
+  --ui-theme-accent-rgb: 199 146 50;
+  --ui-theme-bright: #ffe29a;
+  --ui-theme-bright-rgb: 255 226 154;
+  --ui-theme-paper: #fff3d1;
+  --ui-theme-paper-rgb: 255 243 209;
+  --ui-theme-ink: #1d1608;
+  --ui-theme-panel-rgb: 25 18 6;
+  --ui-theme-panel-soft-rgb: 42 30 9;
+  --ui-theme-secondary: #765015;
+  --ui-theme-secondary-rgb: 118 80 21;
+  --ui-theme-muted: #c7ad79;
+  --ui-theme-glow: rgb(255 202 91 / .34);
+  --ui-theme-texture: url('/ui/themes/hooh.png');
+  --ui-theme-texture-size: 192px 192px;
+  --ui-theme-texture-step: 192px;
+  --ui-theme-texture-opacity: .34;
+  --ui-theme-selection: var(--ui-theme-paper);
+}
+
+/* Une seule texture bitmap par thème : pas de motif CSS simulé ni de
+   particules. */
+html[data-ui-theme='hooh'], #game-menu [data-theme='hooh'] {
+  --ui-theme-texture: url('/ui/themes/hooh.png');
+}
+
+html[data-ui-theme='lugia'], #game-menu [data-theme='lugia'] {
+  --ui-theme-texture: url('/ui/themes/lugia.png');
+}
+
+html[data-ui-theme='rayquaza'], #game-menu [data-theme='rayquaza'] {
+  --ui-theme-texture: url('/ui/themes/rayquaza.png');
+}
+
+html[data-ui-theme='giratina'], #game-menu [data-theme='giratina'] {
+  --ui-theme-texture: url('/ui/themes/giratina.png');
+}
+
+html[data-ui-theme='pikachu'], #game-menu [data-theme='pikachu'] {
+  --ui-theme-texture: url('/ui/themes/pikachu.png');
+}
+
+html[data-ui-theme='charizard'], #game-menu [data-theme='charizard'] {
+  --ui-theme-texture: url('/ui/themes/charizard.png');
+}
+
+html[data-ui-theme='suicune'], #game-menu [data-theme='suicune'] {
+  --ui-theme-texture: url('/ui/themes/suicune.png');
+}
+
+html[data-ui-theme='celebi'], #game-menu [data-theme='celebi'] {
+  --ui-theme-texture: url('/ui/themes/celebi.png');
+}
+
+@keyframes ui-theme-texture-shift {
+  from { background-position: 0 0; }
+  to { background-position: var(--ui-theme-texture-step) var(--ui-theme-texture-step); }
+}
+
+@keyframes ui-rare-pulse {
+  0%, 100% { opacity: .82; filter: brightness(.92); }
+  50% { opacity: 1; filter: brightness(1.22); }
+}

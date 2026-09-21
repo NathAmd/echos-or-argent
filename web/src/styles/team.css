@@ -1,0 +1,257 @@
+/* Équipe : propriétaire unique de la composition, des états et du responsive. */
+#app .runtime-panel #game-menu.ui-menu.ui-menu-detail[data-screen='team'] {
+  width: min(920px, calc(100% - 40px));
+  height: min(560px, calc(100% - 40px));
+}
+
+#game-menu[data-screen='team'] .team-menu-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(250px, 34%) minmax(300px, 1fr) minmax(190px, 22%);
+  min-width: 0;
+  min-height: 0;
+  gap: clamp(8px, 1.15vw, 16px);
+  padding: clamp(10px, 1.45vw, 20px);
+  overflow: hidden;
+  background: transparent;
+}
+
+#game-menu[data-screen='team'] .team-menu-section {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid rgb(var(--ui-theme-accent-rgb) / .22);
+  color: var(--ui-theme-paper);
+  background: rgb(var(--ui-theme-panel-soft-rgb) / .26);
+  background-clip: padding-box;
+  box-shadow: var(--ui-shadow-soft);
+  -webkit-backdrop-filter: var(--ui-blur-soft);
+  backdrop-filter: var(--ui-blur-soft);
+}
+
+#game-menu[data-screen='team'] .team-menu-actions {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#game-menu[data-screen='team'] .team-menu-section > h3 {
+  margin: 0;
+  padding: 8px 11px 7px;
+  overflow: hidden;
+  border-bottom: 1px solid rgb(var(--ui-theme-accent-rgb) / .34);
+  color: var(--ui-theme-accent);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#game-menu[data-screen='team'] .team-menu-roster-list {
+  display: grid;
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  min-height: 0;
+  gap: 3px;
+  padding: 5px;
+}
+
+#game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .ui-menu-button {
+  position: relative;
+  display: grid;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  border: 1px solid rgb(var(--ui-theme-accent-rgb) / .34);
+  color: var(--ui-theme-paper);
+  background: var(--ui-control-surface);
+  background-clip: padding-box;
+  box-shadow: inset 3px 0 rgb(var(--ui-theme-accent-rgb) / .26), 0 6px 16px rgba(0, 0, 0, .25);
+  clip-path: var(--ui-control-shape);
+  text-align: left;
+  transition: border-color 130ms ease, color 130ms ease, background-color 130ms ease, box-shadow 150ms ease, translate 140ms ease;
+}
+
+#game-menu[data-screen='team'] .team-menu-roster .ui-menu-button {
+  grid-template-columns: clamp(38px, 4vw, 58px) minmax(0, 1fr);
+  padding: 4px 38px 4px 7px;
+}
+
+#game-menu[data-screen='team'] .team-menu-roster .game-menu-rom-asset {
+  justify-self: center;
+  width: clamp(36px, 4vw, 54px);
+  height: clamp(36px, 4vw, 54px);
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .game-menu-button-copy { min-width: 0; }
+
+#game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .game-menu-button-label {
+  display: block;
+  overflow: hidden;
+  font-size: clamp(11px, 1vw, 15px);
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#game-menu[data-screen='team'] .team-menu-roster .ui-menu-button small {
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  color: var(--ui-theme-muted);
+  font-size: clamp(8px, .75vw, 10px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-input-modality='pointer'] #game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .ui-menu-button:hover:not(:disabled),
+#game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .ui-menu-button:focus-visible,
+#game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .ui-menu-button[aria-current='true'] {
+  z-index: 1;
+  border-color: var(--ui-theme-bright);
+  color: var(--ui-theme-ink);
+  background: var(--ui-theme-selection);
+  box-shadow: var(--ui-control-shadow-selected);
+  outline: none;
+  translate: 3px 0;
+}
+
+#game-menu[data-screen='team'] .team-menu-roster .ui-menu-button[aria-current='true'] small { color: var(--ui-theme-ink); opacity: .72; }
+#game-menu[data-screen='team'] .team-menu-roster .ui-menu-button[data-party-state='fainted'] { opacity: .58; filter: saturate(.35); }
+
+#game-menu[data-screen='team'] .team-roster-shiny {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  color: var(--ui-theme-bright);
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1;
+  text-shadow: 0 0 8px rgb(var(--ui-theme-bright-rgb) / .7);
+  animation: ui-rare-pulse 1.8s ease-in-out infinite;
+}
+
+#game-menu[data-screen='team'] .team-roster-held-item {
+  position: absolute;
+  right: 5px;
+  bottom: 3px;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  padding: 2px;
+  border: 1px solid rgb(var(--ui-theme-accent-rgb) / .34);
+  border-radius: 50%;
+  background: rgb(var(--ui-theme-panel-rgb) / .84);
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .54));
+}
+
+#game-menu[data-screen='team'] .team-menu-detail-body {
+  min-height: 0;
+  padding: clamp(10px, 1.4vw, 20px);
+  overflow: auto;
+  color: var(--ui-theme-paper);
+  background: rgb(var(--ui-theme-panel-soft-rgb) / .2);
+  scrollbar-color: var(--ui-theme-accent) transparent;
+}
+
+#game-menu[data-screen='team'] .team-menu-detail-body .game-menu-pokemon-row {
+  display: grid;
+  grid-template-columns: minmax(80px, 30%) minmax(0, 1fr);
+  align-items: center;
+  height: 100%;
+  padding: clamp(8px, 1vw, 14px);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#game-menu[data-screen='team'] .team-menu-detail-body .game-menu-pokemon-icon {
+  justify-self: center;
+  width: clamp(86px, 10vw, 128px);
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+#game-menu[data-screen='team'] .team-menu-detail-body h3 { margin: 3px 0; color: var(--ui-theme-paper); font-size: clamp(19px, 2vw, 30px); }
+#game-menu[data-screen='team'] .team-menu-detail-body p { margin: 0; color: var(--ui-theme-muted); font-size: 11px; line-height: 1.45; }
+#game-menu[data-screen='team'] .team-menu-detail-body .game-menu-kicker {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  margin-bottom: 4px;
+  color: var(--ui-theme-accent);
+  font: 900 10px/1.2 var(--ui-font-pixel);
+  letter-spacing: .09em;
+}
+
+#game-menu[data-screen='team'] .team-menu-detail-body .game-menu-hp {
+  display: block;
+  width: 100%;
+  height: 8px;
+  margin-top: 8px;
+  overflow: hidden;
+  border: 1px solid rgb(var(--ui-theme-accent-rgb) / .5);
+  border-radius: 0;
+  accent-color: var(--ui-theme-accent);
+  background: var(--ui-surface-input);
+}
+
+#game-menu[data-screen='team'] .team-menu-detail-body .game-menu-hp::-webkit-progress-bar { background: var(--ui-surface-input); }
+#game-menu[data-screen='team'] .team-menu-detail-body .game-menu-hp::-webkit-progress-value { background: linear-gradient(90deg, var(--ui-theme-secondary), var(--ui-theme-bright)); }
+#game-menu[data-screen='team'] .team-menu-detail-body .game-menu-hp::-moz-progress-bar { background: var(--ui-theme-accent); }
+
+#game-menu[data-screen='team'] .game-menu-pokemon-states { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 12px; }
+#game-menu[data-screen='team'] .game-menu-pokemon-states > * { min-height: 24px; }
+#game-menu[data-screen='team'] :where(.pokemon-state-shiny, .pokemon-state-item) { display: inline-flex; align-items: center; gap: 5px; color: var(--ui-theme-paper); font-size: 10px; letter-spacing: .06em; }
+#game-menu[data-screen='team'] .pokemon-state-shiny { color: var(--ui-theme-bright); text-shadow: 0 0 9px rgb(var(--ui-theme-bright-rgb) / .38); animation: ui-rare-pulse 1.8s ease-in-out infinite; }
+#game-menu[data-screen='team'] .pokemon-state-item { max-width: 100%; }
+#game-menu[data-screen='team'] .pokemon-state-item canvas { flex: 0 0 34px; width: 34px; height: 34px; image-rendering: pixelated; }
+
+#game-menu[data-screen='team'] .team-menu-action-list {
+  display: grid;
+  align-content: center;
+  min-height: 0;
+  gap: 5px;
+}
+
+#game-menu[data-screen='team'] .team-menu-actions .ui-menu-button { min-height: 46px; padding: 8px 14px; }
+
+@media (max-width: 900px), (max-height: 560px) {
+  #app .runtime-panel #game-menu.ui-menu.ui-menu-detail[data-screen='team'] { width: min(820px, calc(100% - 20px)); height: min(500px, calc(100% - 20px)); }
+  #game-menu[data-screen='team'] .team-menu-layout { grid-template-columns: minmax(180px, 38%) minmax(0, 1fr); gap: 6px; padding: 7px; }
+  #game-menu[data-screen='team'] .team-menu-actions { grid-column: 1 / -1; grid-template-rows: auto; }
+  #game-menu[data-screen='team'] .team-menu-action-list { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 3px; }
+  #game-menu[data-screen='team'] .team-menu-actions .ui-menu-button { min-height: 36px; padding-block: 4px; }
+  #game-menu[data-screen='team'] .team-menu-section > h3 { padding: 5px 7px; font-size: 8px; }
+  #game-menu[data-screen='team'] .team-menu-roster .ui-menu-button { grid-template-columns: 30px minmax(0, 1fr); padding: 1px 31px 1px 3px; }
+  #game-menu[data-screen='team'] .team-menu-roster .game-menu-rom-asset { width: 29px; height: 29px; }
+  #game-menu[data-screen='team'] .team-menu-roster .game-menu-button-label { font-size: 10px; line-height: 1; }
+  #game-menu[data-screen='team'] .team-menu-roster .ui-menu-button small { margin-top: 1px; font-size: 7px; line-height: 1; }
+  #game-menu[data-screen='team'] .team-menu-detail-body { padding: 4px; }
+  #game-menu[data-screen='team'] .team-menu-detail-body .game-menu-pokemon-row { grid-template-columns: minmax(58px, 24%) minmax(0, 1fr); padding: 3px; }
+  #game-menu[data-screen='team'] .team-menu-detail-body .game-menu-pokemon-icon { width: min(76px, 100%); }
+  #game-menu[data-screen='team'] .team-menu-detail-body h3 { font-size: 17px; }
+  #game-menu[data-screen='team'] .team-menu-detail-body p { font-size: 8px; }
+  #game-menu[data-screen='team'] .game-menu-pokemon-states { gap: 4px; margin-top: 5px; }
+  #game-menu[data-screen='team'] .game-menu-pokemon-states > * { min-height: 18px; }
+  #game-menu[data-screen='team'] :where(.pokemon-state-shiny, .pokemon-state-item) { font-size: 7px; }
+  #game-menu[data-screen='team'] .pokemon-state-item canvas { width: 27px; height: 27px; flex-basis: 27px; }
+  #game-menu[data-screen='team'] .team-roster-shiny { top: 2px; right: 4px; font-size: 9px; }
+  #game-menu[data-screen='team'] .team-roster-held-item { right: 3px; bottom: 2px; width: 21px; height: 21px; padding: 1px; }
+}
+
+html[data-input-profile='touch'] #game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .ui-menu-button { min-height: 44px; }
+
+@media (prefers-reduced-motion: reduce) {
+  #game-menu[data-screen='team'] :where(.team-menu-roster, .team-menu-actions) .ui-menu-button { transition: none; }
+  #game-menu[data-screen='team'] :where(.team-roster-shiny, .pokemon-state-shiny) { animation: none; }
+}

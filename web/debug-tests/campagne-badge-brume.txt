@@ -1,0 +1,33 @@
+# Nouvelle partie jusqu'au Badge Brume, délai maximal explicite de vingt-cinq minutes et sauvegarde jetable.
+pokemaster-debug-tape-v1 campagne-badge-brume
+
+REPORT avant-campagne
+BOT FOG normal
+WAIT journey=passed 25m
+EXPECT campaignPreset=normal
+EXPECT campaignMode=normal
+EXPECT campaignModules=none
+EXPECT zephyrBadge=true
+EXPECT falknerDefeated=true
+EXPECT togepiEggReceived=true
+EXPECT slowpokeWellCleared=true
+EXPECT hiveBadge=true
+EXPECT bugsyDefeated=true
+EXPECT ilexForestCleared=true
+EXPECT cutLearned=true
+EXPECT radioQuizComplete=true
+EXPECT plainBadge=true
+EXPECT whitneyDefeated=true
+EXPECT squirtBottleReceived=true
+EXPECT sudowoodoCleared=true
+EXPECT legendaryBeastsReleased=true
+EXPECT fogBadge=true
+EXPECT mortyDefeated=true
+EXPECT fogGymComplete=true
+EXPECT journeyCheckpoint=fog-badge-complete
+EXPECT map=80
+EXPECT battle=none
+EXPECT script=false
+EXPECT saveReady=true
+REPORT badge-brume-valide
+STOP

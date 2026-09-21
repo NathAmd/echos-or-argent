@@ -1,0 +1,83 @@
+/*
+ * Contrat visuel final des interfaces de jeu.
+ *
+ * Cette feuille porte les primitives de matière, d'état et de superposition,
+ * puis les adaptateurs de thème des écrans historiques encore en migration.
+ * Les feuilles de domaine restent seules propriétaires de la disposition.
+ */
+
+html {
+  --ui-surface-scrim: rgb(var(--ui-theme-panel-rgb) / .46);
+  --ui-surface-shell: rgb(var(--ui-theme-panel-rgb) / .68);
+  --ui-surface-panel: rgb(var(--ui-theme-panel-soft-rgb) / .46);
+  --ui-surface-soft: rgb(var(--ui-theme-panel-soft-rgb) / .22);
+  --ui-surface-control: rgb(var(--ui-theme-panel-rgb) / .78);
+  --ui-surface-input: rgb(var(--ui-theme-panel-rgb) / .68);
+  --ui-line-soft: rgb(var(--ui-theme-accent-rgb) / .2);
+  --ui-line: rgb(var(--ui-theme-accent-rgb) / .58);
+  --ui-line-strong: rgb(var(--ui-theme-bright-rgb) / .96);
+  --ui-shadow-panel: 7px 7px 0 rgba(0, 0, 0, .48);
+  --ui-blur-panel: blur(18px) saturate(1.08);
+  --ui-blur-soft: blur(11px) saturate(1.04);
+  --ui-font-display: "Courier New", ui-monospace, monospace;
+  --ui-font-pixel: "Courier New", ui-monospace, monospace;
+  --ui-control-line: rgb(var(--ui-theme-accent-rgb) / .72);
+  --ui-control-line-active: rgb(var(--ui-theme-bright-rgb) / 1);
+  --ui-control-surface: var(--ui-surface-control);
+  --ui-control-surface-hover: rgb(var(--ui-theme-panel-soft-rgb) / .82);
+  --ui-control-surface-selected: var(--ui-theme-selection);
+  --ui-control-shadow: inset 4px 0 rgb(var(--ui-theme-accent-rgb) / .72), inset 0 -3px rgb(var(--ui-theme-secondary-rgb) / .58), 4px 4px 0 rgba(0, 0, 0, .5);
+  --ui-control-shadow-selected: inset 5px 0 var(--ui-theme-bright), inset 0 -3px rgb(var(--ui-theme-accent-rgb) / .62), 6px 6px 0 rgba(0, 0, 0, .56);
+  --ui-control-shape: polygon(6px 0, calc(100% - 9px) 0, 100% 9px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 6px);
+  --ui-z-hud: 7;
+  --ui-z-overlay: 44;
+  --ui-z-modal: 70;
+  --ui-z-critical: 80;
+}
+
+/* Aucun calque fantôme ne doit intercepter les clics. La modalité d'entrée ne
+   contrôle que le pointeur et les états de survol. */
+#app .runtime-panel :where(button, [role='button'], input) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+html[data-input-profile='touch'] #app .runtime-panel :where(
+  #game-menu .pokegear-map-board,
+  #game-menu .pokegear-map-fly,
+  #game-menu .pokegear-map-current,
+  #game-menu .pokegear-map-markings-toggle
+) {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+#app .runtime-panel :where(button, [role='button']):disabled {
+  cursor: not-allowed;
+  filter: saturate(.45) brightness(.78);
+  opacity: .52;
+}
+
+#app .runtime-panel :where(button, [role='button'], input):focus-visible {
+  outline: 2px solid var(--ui-line-strong);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app .runtime-panel :where(button, [role='button']) {
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Effet transversal partagé par les propriétaires qui affichent un sprite ROM
+   chromatique ; aucune couleur de sprite n'est reconstruite en CSS. */
+@keyframes ui-holo-sprite {
+  0%, 100% { filter: saturate(1.12) brightness(1) drop-shadow(-2px 2px 0 rgba(91, 224, 255, .58)); }
+  33% { filter: saturate(1.18) brightness(1.08) drop-shadow(2px 1px 0 rgba(255, 238, 132, .62)); }
+  66% { filter: saturate(1.14) brightness(1.03) drop-shadow(0 -2px 0 rgba(239, 137, 255, .56)); }
+}
+
+@keyframes ui-holo-scan {
+  from { background-position: 140% 0; }
+  to { background-position: -140% 0; }
+}

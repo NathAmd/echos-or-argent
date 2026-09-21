@@ -1,0 +1,10 @@
+# À lancer avant d’entrer dans un combat simple/double non-Multi.
+pokemaster-debug-tape-v1 combat-suicide
+
+WAIT combat=true 10m
+WAIT debugReady=true 1m
+REPORT avant-defaite-volontaire
+DEBUG SUICIDE
+PRESS-UNTIL confirm battle=none 180ms 2m
+REPORT blackout-ou-reprise-script
+STOP

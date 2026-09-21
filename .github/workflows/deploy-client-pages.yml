@@ -1,0 +1,70 @@
+name: Deploy static client to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-client:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Verify Node version pin exists
+        run: test -s .node-version
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version-file: 'web/.node-version'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Verify clean tracked release baseline
+        run: node scripts/check-git-reproducibility.mjs
+      - name: Install client dependencies
+        run: npm ci
+      - name: Audit client dependencies
+        run: npm audit --audit-level=high
+      - name: Validate client
+        run: npm run lint && npm test
+      # Première publication solo : aucun backend ni secret de signature requis.
+      # Le contrôle CSP/SRI et le manifeste SHA-384 restent actifs.
+      - name: Build protected static solo client
+        env:
+          POKEMASTER_PUBLIC_BASE_PATH: ${{ vars.POKEMASTER_PUBLIC_BASE_PATH || format('/{0}/', github.event.repository.name) }}
+          POKEMASTER_PUBLIC_ONLINE_SERVER_URL: ''
+          POKEMASTER_PUBLIC_RTC_ICE_SERVERS: ''
+        run: npm run build && npm run verify:build
+      - name: Upload client artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          path: web/dist
+
+  deploy-client:
+    needs: build-client
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy client
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
